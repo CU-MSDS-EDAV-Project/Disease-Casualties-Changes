@@ -8,9 +8,9 @@ execute:
 book:
   title: "YOUR PROJECT TITLE"
   author:
-    - AUTHOR1 (UNI1)
-    - AUTHOR2 (UNI2)
-  repo-url: https://github.com/YOUR_GITHUB_ACCOUNT/REPO_NAME
+    - Li-Yu Hung (lh3224)
+    - Jiayang Liu (jl6680)
+  repo-url: https://github.com/CU-MSDS-EDAV-Project/EDAV_Final_16.git #https://github.com/YOUR_GITHUB_ACCOUNT/REPO_NAME
   date: today
   page-footer:
     right: |
