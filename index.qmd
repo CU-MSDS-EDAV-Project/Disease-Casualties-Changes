@@ -1,1 +1,22 @@
 # Introduction
+Since COVID-19 outbreak, many people have died due to the disease. In order to stay safe and healthy, people may have gradually changed their mindset and hygiene habits accordingly. Owing to this potential change, we are interested in finding if there is are any changes to disease casualties and other plausible factors that might also causes the changes. 
+
+We first by starting researching on diseases transmitted through similar manners, influenza and pneumonia. We would like to explore whether the emergence of COVID-19 affectd the prevalence of casualties in influenza or/and pneumonia before and after the COVID outbreak. Specifically, we are interested in the following aspects of the questions:
+- How is the change reflected nationally over the time frame from 2019 to 2021?
+- How is the change reflected across different regions such as states? Does it have the similar trends in all the states or are there any patterns in states that are nearby?
+- How is the change reflected across different age groups (<18, 18 ~ 64, 65 +)?
+
+After focusing on the influenza and pneumonia, we would like to know the casulaties prevalence of other diseases currently as a whole and individually. For instance, how is the counts of the total deaths spread out in the following categories:
+1. Natural cause
+2. Septicemia
+3. Malignant neoplasms
+4. Diabetes mellitus
+5. Alzheimer disease
+6. Influenza and pneumonia
+7. Respiratory diseases (Combine lower respiratory with other respiratory ones)
+8. Diseases of heart
+9. Cerebrovascular diseases
+
+With the exploration into various diseases' casulaties, it is worthwhile to consider if national coverage of the vaccines affect the disease casulties.
+
+
