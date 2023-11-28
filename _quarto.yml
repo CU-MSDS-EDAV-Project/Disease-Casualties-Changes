@@ -6,7 +6,7 @@ execute:
   echo: true
 
 book:
-  title: "YOUR PROJECT TITLE"
+  title: "Deaths of Different Diseases"
   author:
     - Li-Yu Hung (lh3224)
     - Jiayang Liu (jl6680)
@@ -25,7 +25,7 @@ book:
 
 format:
   html:
-    theme: darkly #cosmo
+    theme: cosmo #darkly See other theme @ https://bootswatch.com/
     code-fold: true
 
 
