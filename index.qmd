@@ -1,7 +1,7 @@
 # Introduction
 Since the COVID-19 outbreak, many people have died due to the disease. In order to stay safe and healthy, people may have gradually changed their mindset and hygiene habits accordingly. Owing to this potential change, we are interested in finding if there are any changes to disease casualties and other plausible factors that might also cause the changes.  
 
-We first started researching diseases transmitted through similar manners, influenza and pneumonia. We would like to explore whether the emergence of COVID-19 affected the prevalence of casualties in influenza or/and pneumonia before and after the COVID-19 outbreak. Specifically, we are interested in the following aspects of the questions:
+We first started researching diseases transmitted through similar manners, influenza and pneumonia. We would like to explore whether the emergence of COVID-19 affected the prevalence of casualties in influenza or/and pneumonia before and after the COVID-19 outbreak. Specifically, we are interested in the following aspects of the questions:  
 - How is the change reflected nationally over the time frame from 2019 to 2021?  
 - How is the change reflected across different regions such as states? Does it have similar trends in all the states or are there any patterns in nearby states?  
 - How is the change reflected across different age groups (<18, 18 ~ 64, 65 +)?  

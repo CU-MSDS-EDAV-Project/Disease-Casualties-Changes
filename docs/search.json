@@ -2,9 +2,9 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "YOUR PROJECT TITLE",
+    "title": "Deaths of Different Diseases",
     "section": "",
-    "text": "1 Introduction"
+    "text": "1 Introduction\nSince the COVID-19 outbreak, many people have died due to the disease. In order to stay safe and healthy, people may have gradually changed their mindset and hygiene habits accordingly. Owing to this potential change, we are interested in finding if there are any changes to disease casualties and other plausible factors that might also cause the changes.\nWe first started researching diseases transmitted through similar manners, influenza and pneumonia. We would like to explore whether the emergence of COVID-19 affected the prevalence of casualties in influenza or/and pneumonia before and after the COVID-19 outbreak. Specifically, we are interested in the following aspects of the questions:\n- How is the change reflected nationally over the time frame from 2019 to 2021?\n- How is the change reflected across different regions such as states? Does it have similar trends in all the states or are there any patterns in nearby states?\n- How is the change reflected across different age groups (&lt;18, 18 ~ 64, 65 +)?\nAfter focusing on influenza and pneumonia, we would like to know the current prevalence of other disease casualties as a whole and individually. For instance, how are the counts of the total deaths spread out in the following categories: 1. Natural cause\n2. Septicemia\n3. Malignant neoplasms\n4. Diabetes mellitus\n5. Alzheimer disease\n6. Influenza and pneumonia\n7. Respiratory diseases (Combine lower respiratory with other respiratory ones)\n8. Diseases of heart\n9. Cerebrovascular diseases\nWith the exploration into various diseases’ casualties, it is worthwhile to consider if national coverage of the vaccines affects disease casualties."
   },
   {
     "objectID": "data.html#description",
