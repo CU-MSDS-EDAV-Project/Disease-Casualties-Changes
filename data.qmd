@@ -19,7 +19,7 @@ The second one is "Weekly Provisional Counts of Deaths by State and Select Cause
 The link to the data source is as follows:  
 https://data.cdc.gov/NCHS/Weekly-Provisional-Counts-of-Deaths-by-State-and-S/muzy-jte6 
 
-Data Source 3:
+Data Source 3:  
 The final ones are "Weekly Cumulative Influenza Vaccination Coverage, Children 6 monoths through 18 years, United States" with dimension of 9895 by 28 and "Weekly Cumulative Influenza Vaccination Coverage, Adults 18 and Older United States" with dimension of 4836 by 22 from National Center for Immunization and Respiratory Diseases (NCIRD). The data are updated regularly throughout the flu seasons whenver new data are available. The influenza vacciation coverage is assessed through the National Immunization Survey - Adult COVID Module (NIS-ACM) providing weekly influenza vaccination coverage estimates. Notice that the weekly influenza surveilance report is prepqred by the Influenza Division so the data are subject to the changes according the the reports received. 
 
 (Plan to import the data). 
