@@ -10,7 +10,7 @@ book:
   author:
     - Li-Yu Hung (lh3224)
     - Jiayang Liu (jl6680)
-  repo-url: https://github.com/CU-MSDS-EDAV-Project/EDAV_Final_16.git #https://github.com/YOUR_GITHUB_ACCOUNT/REPO_NAME
+  repo-url: https://github.com/CU-MSDS-EDAV-Project/Disease-Casualties-Changes.git #https://github.com/YOUR_GITHUB_ACCOUNT/REPO_NAME
   date: today
   page-footer:
     right: |
