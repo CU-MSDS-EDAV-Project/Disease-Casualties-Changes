@@ -6,7 +6,7 @@ We first started researching diseases transmitted through similar manners, influ
 - How is the change reflected across different regions such as states? Does it have similar trends in all the states or are there any patterns in nearby states?  
 - How is the change reflected across different age groups (<18, 18 ~ 64, 65 +)?  
 
-After focusing on influenza and pneumonia, we would like to know the current prevalence of other disease casualties as a whole and individually. For instance, how are the counts of the total deaths spread out in the following categories:
+After focusing on influenza and pneumonia, we would like to know the current prevalence of other disease casualties as a whole and individually. For instance, how are the counts of the total deaths spread out in the following categories:      
 1. Natural cause  
 2. Septicemia  
 3. Malignant neoplasms  
