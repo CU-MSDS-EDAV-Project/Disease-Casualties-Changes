@@ -169,6 +169,23 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="description" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="description"><span class="header-section-number">2.1</span> Description</h2>
+<p>To find out whether there are any changes to disease casualties and other plausible factors that might also cause the changes, we collected several datasets from Centers for Disease Control and Prevention.</p>
+<p>Data Source 1:<br>
+The first one is “Pneumonia and Influenza Mortality Surveillance” from National Center for Health Statistics (NCHS) Mortality Surveillance System, a table of dimension 19345 by 14 when choosing state data. The data sources are collected by NCHS through State Vital Statistics Offices across the United States. The deaths which is confirmed through death certificate include multiple cause associated with influenza, pneumonia, or COVID. Because the data are collected weekly, they are updated and aggregated by weeks and will be displayed from 1 to 52 through a complete year. Note that the value total deaths include all the frequency based on ICD-10 multiple cause of death so it doesn’t equal to the sum of deaths from influenza, pneumonia and COVID-19 only.</p>
+<p>(Plan to import the data)</p>
+<p>The link to the data source is as follows:<br>
+https://gis.cdc.gov/grasp/fluview/Mortality.html</p>
+<p>Data Source 2:<br>
+The second one is “Weekly Provisional Counts of Deaths by State and Select Causes, 2020-2023” by National Center for Health Statistics (NCHS), a table of dimension 10477 by 20. The data is collected by NCHS through the Vital Statistics Cooperative Program and updated as of September 27, 2023. The mortality data are based on the death certificates in all the states include counts of death by cause, week and state but they excludes the nonresidents and fetus. Notice that the provisional deaths are based on the flow of the mortality data in the National Vital Statistics System so there is a time lapse between the time deaths occur and the time to submit and eventually reflected on the system. Also, we need to be aware that the cause of the death classification is categiried by ICD-10 codes. So the total valus of deaths is not equal to the sum of the listed deaths in other categories.</p>
+<p>(Plan to import the data)</p>
+<p>The link to the data source is as follows:<br>
+https://data.cdc.gov/NCHS/Weekly-Provisional-Counts-of-Deaths-by-State-and-S/muzy-jte6</p>
+<p>Data Source 3: The final ones are “Weekly Cumulative Influenza Vaccination Coverage, Children 6 monoths through 18 years, United States” with dimension of 9895 by 28 and “Weekly Cumulative Influenza Vaccination Coverage, Adults 18 and Older United States” with dimension of 4836 by 22 from National Center for Immunization and Respiratory Diseases (NCIRD). The data are updated regularly throughout the flu seasons whenver new data are available. The influenza vacciation coverage is assessed through the National Immunization Survey - Adult COVID Module (NIS-ACM) providing weekly influenza vaccination coverage estimates. Notice that the weekly influenza surveilance report is prepqred by the Influenza Division so the data are subject to the changes according the the reports received.</p>
+<p>(Plan to import the data).</p>
+<p>The link to the data source is as follows:<br>
+&lt;18: https://data.cdc.gov/Vaccinations/Weekly-Cumulative-Influenza-Vaccination-Coverage-C/eudc-n39h<br>
+18+: https://data.cdc.gov/Flu-Vaccinations/Weekly-Cumulative-Influenza-Vaccination-Coverage-A/2v3t-r3np.</p>
+<p>(For each data sources, describe how the data are collected and by whom. Describe the format of the data, the frequency of updates, dimensions, and any other relevant information. Note any issues / problems with the data, either known or that you discover. Explain how you plan to import the data. Carefully document your sources with links to the precise data sources that you used. If that is not possible (for example if your data is not available online, then explain that clearly.))</p>
 </section>
 <section id="missing-value-analysis" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="missing-value-analysis"><span class="header-section-number">2.2</span> Missing value analysis</h2>
