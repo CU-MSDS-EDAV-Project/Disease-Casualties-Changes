@@ -37,3 +37,35 @@ In dataset 1, we noticed that there are specific weeks of some states that have 
 In dataset 2, a lot of diseases have null values different states such as Alaska, Arkansas, Colorado, Connecticut, Delaware, District of Columbia, Hawaii, Idaho, Indiana, Iowa, Kansas, Louisiana, Maine, Maryland, Minnesota, most of which are missing in influenza and pneumonia, and abnormal clinical findings. 
 
 In dataset 3, it seems that Guam in "Weekly Cumulative Influenza Vaccination Coverage for Children" tends to have missing values for a few estimation variables such as point estimate, and confidence intervals while the data belongs to "Up-to-date" indicator label in "Weekly Cumulative Influenza Vaccination Coverage for Adults" are highly likely to appear missing. 
+
+#Read data
+```{r}
+library(dplyr)
+df1 = read.csv('data/data1.csv')
+df2 = read.csv('data/data2.csv')
+df3_youth = read.csv('data/data3_youth.csv')
+df3_adult = read.csv('data/data3_adult.csv')
+df1_filter = df1 %>% select('SUB.AREA','SEASON','AGE.GROUP','WEEK','NUM.INFLUENZA.DEATHS','NUM.PNEUMONIA.DEATHS','NUM.COVID.19.DEATHS','TOTAL.DEATHS')
+df2_filter = df2 %>% select('MMWR.Year','MMWR.Week','All.Cause','Natural.Cause','Septicemia..A40.A41.','Malignant.neoplasms..C00.C97.','Diabetes.mellitus..E10.E14.','Alzheimer.disease..G30.','Influenza.and.pneumonia..J09.J18.','Chronic.lower.respiratory.diseases..J40.J47.','Other.diseases.of.respiratory.system..J00.J06.J30.J39.J67.J70.J98.','Nephritis..nephrotic.syndrome.and.nephrosis..N00.N07.N17.N19.N25.N27.','Symptoms..signs.and.abnormal.clinical.and.laboratory.findings..not.elsewhere.classified..R00.R99.','Diseases.of.heart..I00.I09.I11.I13.I20.I51.','Cerebrovascular.diseases..I60.I69.','COVID.19..U071..Multiple.Cause.of.Death.','COVID.19..U071..Underlying.Cause.of.Death.')
+df3_youth_filter = df3_youth %>% select('Geography_Name','Demographic_Name','Month_Week','n_unweighted','n_weighted','Influenza_Season','Legend_Label') %>% filter(Geography_Name !='National')
+df3_adult_filter = df3_adult %>% select('Geographic_Name','Demographic_Name','Month_Week','n_unweighted','Influenza_Season','Legend') %>% filter(Geographic_Name !='National')
+head(df1_filter)
+df2_filter
+head(df3_youth_filter)
+head(df3_adult_filter)
+```
+For dataset 1, we have the following that have missing values:
+```{r}
+df1_filter %>% filter(NUM.INFLUENZA.DEATHS == 'Insufficient Data')
+```
+For dataset 2, we have missing values as shown below:
+```{r}
+head(df2_filter[!complete.cases(df2_filter),] %>% select(!c('MMWR.Year','MMWR.Week')))
+```
+For dataset 3, we have missing values as follows:
+```{r}
+head(df3_youth_filter[!complete.cases(df3_youth_filter),])
+head(df3_adult_filter[!complete.cases(df3_adult_filter),])
+```
+
+
