@@ -15,13 +15,22 @@ When you save the notebook, an HTML file containing the code and output will be 
 
 Read data
 ```{r}
+library(dplyr)
 df1 = read.csv('data/data1.csv')
-head(df1)
+#head(df1)
 df2 = read.csv('data/data2.csv')
-head(df2)
+#head(df2)
 df3_youth = read.csv('data/data3_youth.csv')
 df3_adult = read.csv('data/data3_adult.csv')
-head(df3_youth)
-head(df3_adult)
+#df3_youth
+#df3_adult
+df1_filter = df1 %>% select('SUB.AREA','SEASON','AGE.GROUP','WEEK','NUM.INFLUENZA.DEATHS','NUM.PNEUMONIA.DEATHS','NUM.COVID.19.DEATHS','TOTAL.DEATHS')
+#head(df1_filter)
+df2_filter = df2 %>% select('MMWR.Year','MMWR.Week','All.Cause','Natural.Cause','Septicemia..A40.A41.','Malignant.neoplasms..C00.C97.','Diabetes.mellitus..E10.E14.','Alzheimer.disease..G30.','Influenza.and.pneumonia..J09.J18.','Chronic.lower.respiratory.diseases..J40.J47.','Other.diseases.of.respiratory.system..J00.J06.J30.J39.J67.J70.J98.','Nephritis..nephrotic.syndrome.and.nephrosis..N00.N07.N17.N19.N25.N27.','Symptoms..signs.and.abnormal.clinical.and.laboratory.findings..not.elsewhere.classified..R00.R99.','Diseases.of.heart..I00.I09.I11.I13.I20.I51.','Cerebrovascular.diseases..I60.I69.','COVID.19..U071..Multiple.Cause.of.Death.','COVID.19..U071..Underlying.Cause.of.Death.')
+#head(df2_filter)
+df3_youth_filter = df3_youth %>% select('Geography_Name','Demographic_Name','Month_Week','n_unweighted','n_weighted','Influenza_Season','Legend_Label') %>% filter(Geography_Name !='National')
+df3_adult_filter = df3_adult %>% select('Geographic_Name','Demographic_Name','Month_Week','n_unweighted','Influenza_Season','Legend') %>% filter(Geographic_Name !='National')
+head(df3_youth_filter)
+head(df3_adult_filter)
 ```
 
