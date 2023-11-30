@@ -4,6 +4,8 @@ project:
 
 execute:
   echo: true
+  message: false
+  warning: false
 
 book:
   title: "Deaths of Different Diseases"
