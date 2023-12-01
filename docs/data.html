@@ -221,16 +221,26 @@ The final ones are “Weekly Cumulative Influenza Vaccination Coverage, Children
 </section>
 <section id="research-plan" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="research-plan"><span class="header-section-number">2.2</span> Research Plan</h2>
-<p>Since all data sets are collected weekly, it is intuitive to merge the data across different sources and then group them by states or by weeks in general sense. We may clean and process data by keeping variables indicating weeks, states, ages, and deaths of influenza or/and pneumonia to demonstrate what are the changes before and after the COVID-19 outbreak. Depending on the graphs’ needs and availability of data, we could potentially extend the range of data from comparing year 2019 with year 2022 to a wider range of year such as from year 2018 to 2019 and with those from 2021 to 2023. With larger pool of the data points, it is more likely to show the effects of COVID-19 on the casualties of diseases of interest. A brief show of dataset 1 without any merging is as follows:</p>
+<p>We first load the required libraries for loading, cleaning and processing data for all the datasets.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">'data/data1.csv'</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>df1_filter <span class="ot">=</span> df1 <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="st">'SUB.AREA'</span>,<span class="st">'SEASON'</span>,<span class="st">'AGE.GROUP'</span>,<span class="st">'WEEK'</span>,<span class="st">'NUM.INFLUENZA.DEATHS'</span>,<span class="st">'NUM.PNEUMONIA.DEATHS'</span>,<span class="st">'NUM.COVID.19.DEATHS'</span>,<span class="st">'TOTAL.DEATHS'</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(df1_filter) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'state'</span>,<span class="st">'season'</span>,<span class="st">'age_group'</span>,<span class="st">'week'</span>,<span class="st">'influenza'</span>,<span class="st">'pneumonia'</span>,<span class="st">'covid'</span>,<span class="st">'total'</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df1_filter)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reshape2)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Since all data sets are collected weekly, it is intuitive to merge the data across different sources and then group them by states or by weeks in general sense. We may clean and process data by keeping variables indicating weeks, states, ages, and deaths of influenza or/and pneumonia to demonstrate what are the changes before and after the COVID-19 outbreak. Depending on the graphs’ needs and availability of data, we could potentially extend the range of data from comparing year 2019 with year 2022 to a wider range of year such as from year 2018 to 2019 and with those from 2021 to 2023. With larger pool of the data points, it is more likely to show the effects of COVID-19 on the casualties of diseases of interest. A brief show of dataset 1 without any merging is as follows:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">'data/data1.csv'</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df1_filter <span class="ot">=</span> df1 <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="st">'SUB.AREA'</span>,<span class="st">'SEASON'</span>,<span class="st">'AGE.GROUP'</span>,<span class="st">'WEEK'</span>,<span class="st">'NUM.INFLUENZA.DEATHS'</span>,<span class="st">'NUM.PNEUMONIA.DEATHS'</span>,<span class="st">'NUM.COVID.19.DEATHS'</span>,<span class="st">'TOTAL.DEATHS'</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(df1_filter) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'state'</span>,<span class="st">'season'</span>,<span class="st">'age_group'</span>,<span class="st">'week'</span>,<span class="st">'influenza'</span>,<span class="st">'pneumonia'</span>,<span class="st">'covid'</span>,<span class="st">'total'</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df1_filter)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>    state  season age_group week influenza pneumonia covid total
@@ -246,10 +256,10 @@ The final ones are “Weekly Cumulative Influenza Vaccination Coverage, Children
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">'data/data2.csv'</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df2_filter <span class="ot">=</span> df2 <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="st">'MMWR.Year'</span>,<span class="st">'MMWR.Week'</span>,<span class="st">'All.Cause'</span>,<span class="st">'Natural.Cause'</span>,<span class="st">'Septicemia..A40.A41.'</span>,<span class="st">'Malignant.neoplasms..C00.C97.'</span>,<span class="st">'Diabetes.mellitus..E10.E14.'</span>,<span class="st">'Alzheimer.disease..G30.'</span>,<span class="st">'Influenza.and.pneumonia..J09.J18.'</span>,<span class="st">'Chronic.lower.respiratory.diseases..J40.J47.'</span>,<span class="st">'Other.diseases.of.respiratory.system..J00.J06.J30.J39.J67.J70.J98.'</span>,<span class="st">'Nephritis..nephrotic.syndrome.and.nephrosis..N00.N07.N17.N19.N25.N27.'</span>,<span class="st">'Symptoms..signs.and.abnormal.clinical.and.laboratory.findings..not.elsewhere.classified..R00.R99.'</span>,<span class="st">'Diseases.of.heart..I00.I09.I11.I13.I20.I51.'</span>,<span class="st">'Cerebrovascular.diseases..I60.I69.'</span>,<span class="st">'COVID.19..U071..Multiple.Cause.of.Death.'</span>,<span class="st">'COVID.19..U071..Underlying.Cause.of.Death.'</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(df2_filter) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'year'</span>,<span class="st">'week'</span>,<span class="st">'all_cause'</span>,<span class="st">'natural'</span>,<span class="st">'septicemia'</span>,<span class="st">'neoplasms'</span>,<span class="st">'miabete'</span>,<span class="st">'alzheimer'</span>,<span class="st">'influenza/pneumonia'</span>,<span class="st">'lower_respiratory'</span>,<span class="st">'other_respiratory'</span>,<span class="st">'nephritis'</span>,<span class="st">'abnormal'</span>,<span class="st">'heart'</span>,<span class="st">'cerebrovascular'</span>,<span class="st">'covid_nultiple'</span>,<span class="st">'covid_underlying'</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df2_filter)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">'data/data2.csv'</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df2_filter <span class="ot">=</span> df2 <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="st">'MMWR.Year'</span>,<span class="st">'MMWR.Week'</span>,<span class="st">'All.Cause'</span>,<span class="st">'Natural.Cause'</span>,<span class="st">'Septicemia..A40.A41.'</span>,<span class="st">'Malignant.neoplasms..C00.C97.'</span>,<span class="st">'Diabetes.mellitus..E10.E14.'</span>,<span class="st">'Alzheimer.disease..G30.'</span>,<span class="st">'Influenza.and.pneumonia..J09.J18.'</span>,<span class="st">'Chronic.lower.respiratory.diseases..J40.J47.'</span>,<span class="st">'Other.diseases.of.respiratory.system..J00.J06.J30.J39.J67.J70.J98.'</span>,<span class="st">'Nephritis..nephrotic.syndrome.and.nephrosis..N00.N07.N17.N19.N25.N27.'</span>,<span class="st">'Symptoms..signs.and.abnormal.clinical.and.laboratory.findings..not.elsewhere.classified..R00.R99.'</span>,<span class="st">'Diseases.of.heart..I00.I09.I11.I13.I20.I51.'</span>,<span class="st">'Cerebrovascular.diseases..I60.I69.'</span>,<span class="st">'COVID.19..U071..Multiple.Cause.of.Death.'</span>,<span class="st">'COVID.19..U071..Underlying.Cause.of.Death.'</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(df2_filter) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'year'</span>,<span class="st">'week'</span>,<span class="st">'all_cause'</span>,<span class="st">'natural'</span>,<span class="st">'septicemia'</span>,<span class="st">'neoplasms'</span>,<span class="st">'miabete'</span>,<span class="st">'alzheimer'</span>,<span class="st">'influenza/pneumonia'</span>,<span class="st">'lower_respiratory'</span>,<span class="st">'other_respiratory'</span>,<span class="st">'nephritis'</span>,<span class="st">'abnormal'</span>,<span class="st">'heart'</span>,<span class="st">'cerebrovascular'</span>,<span class="st">'covid_nultiple'</span>,<span class="st">'covid_underlying'</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df2_filter)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  year week all_cause natural septicemia neoplasms miabete alzheimer
@@ -279,13 +289,13 @@ The final ones are “Weekly Cumulative Influenza Vaccination Coverage, Children
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df3_youth <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">'data/data3_youth.csv'</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df3_adult <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">'data/data3_adult.csv'</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>df3_youth_filter <span class="ot">=</span> df3_youth <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="st">'Geography_Name'</span>,<span class="st">'Demographic_Name'</span>,<span class="st">'Month_Week'</span>,<span class="st">'n_unweighted'</span>,<span class="st">'n_weighted'</span>,<span class="st">'Influenza_Season'</span>,<span class="st">'Legend_Label'</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Geography_Name <span class="sc">!=</span><span class="st">'National'</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>df3_adult_filter <span class="ot">=</span> df3_adult <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="st">'Geographic_Name'</span>,<span class="st">'Demographic_Name'</span>,<span class="st">'Month_Week'</span>,<span class="st">'n_unweighted'</span>,<span class="st">'Influenza_Season'</span>,<span class="st">'Legend'</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Geographic_Name <span class="sc">!=</span><span class="st">'National'</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(Geographic_Name,<span class="st">'Region'</span>))</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(df3_youth_filter) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'state'</span>,<span class="st">'age'</span>,<span class="st">'week'</span>,<span class="st">'unweighted_death'</span>,<span class="st">'weighted_death'</span>,<span class="st">'season'</span>,<span class="st">'legend'</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(df3_adult_filter) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'state'</span>,<span class="st">'age'</span>,<span class="st">'month'</span>,<span class="st">'unweighted_death'</span>,<span class="st">'season'</span>,<span class="st">'legend'</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df3_youth_filter)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df3_youth <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">'data/data3_youth.csv'</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df3_adult <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">'data/data3_adult.csv'</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>df3_youth_filter <span class="ot">=</span> df3_youth <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="st">'Geography_Name'</span>,<span class="st">'Demographic_Name'</span>,<span class="st">'Month_Week'</span>,<span class="st">'n_unweighted'</span>,<span class="st">'n_weighted'</span>,<span class="st">'Influenza_Season'</span>,<span class="st">'Legend_Label'</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Geography_Name <span class="sc">!=</span><span class="st">'National'</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>df3_adult_filter <span class="ot">=</span> df3_adult <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="st">'Geographic_Name'</span>,<span class="st">'Demographic_Name'</span>,<span class="st">'Month_Week'</span>,<span class="st">'n_unweighted'</span>,<span class="st">'Influenza_Season'</span>,<span class="st">'Legend'</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Geographic_Name <span class="sc">!=</span><span class="st">'National'</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(Geographic_Name,<span class="st">'Region'</span>))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(df3_youth_filter) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'state'</span>,<span class="st">'age'</span>,<span class="st">'week'</span>,<span class="st">'unweighted_death'</span>,<span class="st">'weighted_death'</span>,<span class="st">'season'</span>,<span class="st">'legend'</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(df3_adult_filter) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'state'</span>,<span class="st">'age'</span>,<span class="st">'month'</span>,<span class="st">'unweighted_death'</span>,<span class="st">'season'</span>,<span class="st">'legend'</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df3_youth_filter)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>       state     age           week unweighted_death weighted_death    season
@@ -305,7 +315,7 @@ The final ones are “Weekly Cumulative Influenza Vaccination Coverage, Children
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df3_adult_filter)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df3_adult_filter)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>       state     age   month unweighted_death    season
@@ -332,119 +342,136 @@ The final ones are “Weekly Cumulative Influenza Vaccination Coverage, Children
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df1_missing <span class="ot">&lt;-</span> df1_filter <span class="sc">%&gt;%</span> <span class="fu">filter</span>(influenza <span class="sc">==</span> <span class="st">'Insufficient Data'</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df1_missing</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/data1.csv"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculating the number of missing values per column</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>missing_values_counts <span class="ot">&lt;-</span> <span class="fu">colSums</span>(<span class="fu">is.na</span>(data1))</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a data frame for ggplot</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>missing_data_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Variable =</span> <span class="fu">names</span>(missing_values_counts),</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">MissingValues =</span> missing_values_counts</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the bar chart</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(missing_data_df, <span class="fu">aes</span>(<span class="at">x =</span> Variable, <span class="at">y =</span> MissingValues)) <span class="sc">+</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Variables"</span>, <span class="at">y =</span> <span class="st">"Number of Missing Values"</span>, <span class="at">title =</span> <span class="st">"Missing Data by Variable For Data1 File"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>                  state  season age_group week         influenza
-1                Alaska 2023-24       All   46 Insufficient Data
-2              Delaware 2023-24       All   46 Insufficient Data
-3  District of Columbia 2023-24       All   46 Insufficient Data
-4               Indiana 2023-24       All   46 Insufficient Data
-5              Kentucky 2023-24       All   46 Insufficient Data
-6             Louisiana 2023-24       All   46 Insufficient Data
-7               Montana 2023-24       All   46 Insufficient Data
-8                Nevada 2023-24       All   40 Insufficient Data
-9                Nevada 2023-24       All   41 Insufficient Data
-10               Nevada 2023-24       All   42 Insufficient Data
-11               Nevada 2023-24       All   43 Insufficient Data
-12               Nevada 2023-24       All   44 Insufficient Data
-13               Nevada 2023-24       All   45 Insufficient Data
-14               Nevada 2023-24       All   46 Insufficient Data
-15       North Carolina 2023-24       All   46 Insufficient Data
-16               Nevada 2022-23       All   38 Insufficient Data
-17               Nevada 2022-23       All   39 Insufficient Data
-           pneumonia             covid             total
-1  Insufficient Data Insufficient Data Insufficient Data
-2  Insufficient Data Insufficient Data Insufficient Data
-3  Insufficient Data Insufficient Data Insufficient Data
-4  Insufficient Data Insufficient Data Insufficient Data
-5  Insufficient Data Insufficient Data Insufficient Data
-6  Insufficient Data Insufficient Data Insufficient Data
-7  Insufficient Data Insufficient Data Insufficient Data
-8  Insufficient Data Insufficient Data Insufficient Data
-9  Insufficient Data Insufficient Data Insufficient Data
-10 Insufficient Data Insufficient Data Insufficient Data
-11 Insufficient Data Insufficient Data Insufficient Data
-12 Insufficient Data Insufficient Data Insufficient Data
-13 Insufficient Data Insufficient Data Insufficient Data
-14 Insufficient Data Insufficient Data Insufficient Data
-15 Insufficient Data Insufficient Data Insufficient Data
-16 Insufficient Data Insufficient Data Insufficient Data
-17 Insufficient Data Insufficient Data Insufficient Data</code></pre>
+<div class="cell-output-display">
+<p><img src="data_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new dataframe indicating if each value is missing</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>missing_values <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>SUB.AREA, is.na))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the proportion of missing values by state for each variable</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>missing_values_proportion <span class="ot">&lt;-</span> missing_values <span class="sc">%&gt;%</span> </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(SUB.AREA) <span class="sc">%&gt;%</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(., <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">n</span>()))</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshape the data for the heatmap</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>long_format <span class="ot">&lt;-</span> <span class="fu">melt</span>(missing_values_proportion, <span class="at">id.vars =</span> <span class="st">'SUB.AREA'</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the heatmap</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(long_format, <span class="fu">aes</span>(<span class="at">x =</span> variable, <span class="at">y =</span> SUB.AREA, <span class="at">fill =</span> value)) <span class="sc">+</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"grey"</span>, <span class="at">high =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Variable"</span>, <span class="at">y =</span> <span class="st">"Sub-Area"</span>, <span class="at">fill =</span> <span class="st">"Proportion Missing"</span>) <span class="sc">+</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">10</span>),</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="data_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>In dataset 2, a lot of diseases have null values different states such as Alaska, Arkansas, Colorado, Connecticut, Delaware, District of Columbia, Hawaii, Idaho, Indiana, Iowa, Kansas, Louisiana, Maine, Maryland, Minnesota, most of which are missing in influenza and pneumonia, and abnormal clinical findings.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df2_filter[<span class="sc">!</span><span class="fu">complete.cases</span>(df2_filter),] <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">!</span><span class="fu">c</span>(<span class="st">'year'</span>,<span class="st">'week'</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/data2.csv"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a function to count missing values</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>count_missing <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  na_count <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(x))             <span class="co"># Count NA values</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  blank_count <span class="ot">&lt;-</span> <span class="fu">sum</span>(x <span class="sc">==</span> <span class="st">""</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="co"># Count blank strings, remove NA from count</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(na_count <span class="sc">+</span> blank_count)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply this function to every column in the dataframe</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>missing_counts <span class="ot">&lt;-</span> <span class="fu">sapply</span>(data2, count_missing)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a data frame for ggplot</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>variable_indices <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(missing_counts)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>missing_data_df1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Variable =</span> variable_indices,</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">MissingValues =</span> missing_counts</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the bar chart</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(missing_data_df1, <span class="fu">aes</span>(<span class="at">x =</span> Variable, <span class="at">y =</span> MissingValues)) <span class="sc">+</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Variable Index"</span>, <span class="at">y =</span> <span class="st">"Number of Missing Values"</span>, <span class="at">title =</span> <span class="st">"Missing Data by Variable For Data2 File"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>    all_cause natural septicemia neoplasms miabete alzheimer
-198      1056     982         16       190      23        54
-203      1164    1093         20       212      28        62
-206      1059     986         17       227      25        46
-221      1201    1112         14       221      30        59
-227      1305    1207         NA       166      26        60
-308      1196    1105         20       173      35        49
-    influenza/pneumonia lower_respiratory other_respiratory nephritis abnormal
-198                  29                61                11        14       23
-203                  30                88                20        21       25
-206                  26                67                24        22       16
-221                  13                60                NA        18       25
-227                  20                68                21        15       24
-308                  15                61                20        27       NA
-    heart cerebrovascular covid_nultiple covid_underlying
-198   284              70             NA                0
-203   294              60             NA               NA
-206   263              72             NA               NA
-221   296              49            125              119
-227   291              74            230              214
-308   279              64            159              137</code></pre>
+<div class="cell-output-display">
+<p><img src="data_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">'data2missing.png'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>In dataset 3, it seems that Guam in “Weekly Cumulative Influenza Vaccination Coverage for Children” tends to have missing values for a few estimation variables such as point estimate, and confidence intervals while the data belongs to “Up-to-date” indicator label in “Weekly Cumulative Influenza Vaccination Coverage for Adults” are highly likely to appear missing.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df3_youth_filter[<span class="sc">!</span><span class="fu">complete.cases</span>(df3_youth_filter),])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>data3_adult <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/data3_adult.csv"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>data3_youth <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/data3_youth.csv"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a function to count missing values</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>count_missing <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  na_count <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(x))             <span class="co"># Count NA values</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  blank_count <span class="ot">&lt;-</span> <span class="fu">sum</span>(x <span class="sc">==</span> <span class="st">""</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="co"># Count blank strings, remove NA from count</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(na_count <span class="sc">+</span> blank_count)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply this function to every column in the dataframe</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>missing_counts3a <span class="ot">&lt;-</span> <span class="fu">sapply</span>(data3_adult, count_missing)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>missing_counts3y <span class="ot">&lt;-</span> <span class="fu">sapply</span>(data3_youth, count_missing)</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a data frame for ggplot</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>missing_data_df3a <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">Variable =</span> <span class="fu">names</span>(missing_counts3a),</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">MissingValues =</span> missing_counts3a</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the bar chart</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(missing_data_df3a, <span class="fu">aes</span>(<span class="at">x =</span> Variable, <span class="at">y =</span> MissingValues)) <span class="sc">+</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Variables"</span>, <span class="at">y =</span> <span class="st">"Number of Missing Values"</span>, <span class="at">title =</span> <span class="st">"Missing Data by Variable For Data3_Adult File"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>    state     age            week unweighted_death weighted_death    season
-58   Guam Overall  October Week 1               NA             NA 2019-2020
-116  Guam Overall  October Week 2               NA             NA 2019-2020
-174  Guam Overall  October Week 3               NA             NA 2019-2020
-232  Guam Overall  October Week 4               NA             NA 2019-2020
-290  Guam Overall November Week 1               NA             NA 2019-2020
-348  Guam Overall November Week 2               NA             NA 2019-2020
-                               legend
-58  2019-2020, Guam. Overall: Overall
-116 2019-2020, Guam. Overall: Overall
-174 2019-2020, Guam. Overall: Overall
-232 2019-2020, Guam. Overall: Overall
-290 2019-2020, Guam. Overall: Overall
-348 2019-2020, Guam. Overall: Overall</code></pre>
+<div class="cell-output-display">
+<p><img src="data_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df3_adult_filter[<span class="sc">!</span><span class="fu">complete.cases</span>(df3_adult_filter),])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a data frame for ggplot</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>missing_data_df3y <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Variable =</span> <span class="fu">names</span>(missing_counts3y),</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">MissingValues =</span> missing_counts3y</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the bar chart</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(missing_data_df3y, <span class="fu">aes</span>(<span class="at">x =</span> Variable, <span class="at">y =</span> MissingValues)) <span class="sc">+</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Variables"</span>, <span class="at">y =</span> <span class="st">"Number of Missing Values"</span>, <span class="at">title =</span> <span class="st">"Missing Data by Variable For Data3_Youth File"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>              state     age    month unweighted_death    season
-105  Virgin Islands Overall November               NA 2022-2023
-211  Virgin Islands Overall December               NA 2022-2023
-370  Virgin Islands Overall February               NA 2021-2022
-423  Virgin Islands Overall    March               NA 2021-2022
-476  Virgin Islands Overall    April               NA 2021-2022
-2173 Virgin Islands Overall  January               NA 2021-2022
-                                 legend
-105  2022-2023, Virgin Islands, Overall
-211  2022-2023, Virgin Islands, Overall
-370  2021-2022, Virgin Islands, Overall
-423  2021-2022, Virgin Islands, Overall
-476  2021-2022, Virgin Islands, Overall
-2173 2021-2022, Virgin Islands, Overall</code></pre>
+<div class="cell-output-display">
+<p><img src="data_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 

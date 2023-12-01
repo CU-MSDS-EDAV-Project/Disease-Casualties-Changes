@@ -23,10 +23,17 @@ The link to the data source is as follows:
 18 + years old: https://data.cdc.gov/Flu-Vaccinations/Weekly-Cumulative-Influenza-Vaccination-Coverage-A/2v3t-r3np  
 
 ## Research Plan  
-Since all data sets are collected weekly, it is intuitive to merge the data across different sources and then group them by states or by weeks in general sense. We may clean and process data by keeping variables indicating weeks, states, ages, and deaths of influenza or/and pneumonia to demonstrate what are the changes before and after the COVID-19 outbreak. Depending on the graphs' needs and availability of data, we could potentially extend the range of data from comparing year 2019 with year 2022 to a wider range of year such as from year 2018 to 2019 and with those from 2021 to 2023. With larger pool of the data points, it is more likely to show the effects of COVID-19 on the casualties of diseases of interest. A brief show of dataset 1 without any merging is as follows:  
+We first load the required libraries for loading, cleaning and processing data for all the datasets.
 ```{r}
 library(dplyr)
+library(ggplot2)
+library(dplyr)
+library(reshape2)
+library(gridExtra)
 library(stringr)
+```
+Since all data sets are collected weekly, it is intuitive to merge the data across different sources and then group them by states or by weeks in general sense. We may clean and process data by keeping variables indicating weeks, states, ages, and deaths of influenza or/and pneumonia to demonstrate what are the changes before and after the COVID-19 outbreak. Depending on the graphs' needs and availability of data, we could potentially extend the range of data from comparing year 2019 with year 2022 to a wider range of year such as from year 2018 to 2019 and with those from 2021 to 2023. With larger pool of the data points, it is more likely to show the effects of COVID-19 on the casualties of diseases of interest. A brief show of dataset 1 without any merging is as follows:  
+```{r}
 df1 = read.csv('data/data1.csv')
 df1_filter = df1 %>% select('SUB.AREA','SEASON','AGE.GROUP','WEEK','NUM.INFLUENZA.DEATHS','NUM.PNEUMONIA.DEATHS','NUM.COVID.19.DEATHS','TOTAL.DEATHS')
 colnames(df1_filter) <- c('state','season','age_group','week','influenza','pneumonia','covid','total')
@@ -58,19 +65,108 @@ After brief observation on the data sets, we realized that all the data sets hav
 
 In dataset 1, we noticed that there are specific weeks of some states that have missing values. For example, in week 46 Alaska, Delaware, District of Columbia, Indiana, Kentucky, Louisiana, Montana, Nevada and North Carolina are all showing "insufficient data". Meanwhile, Nevada is missing all the data for the year 2023 from week 40 to week 46. 
 ```{r}
-df1_missing <- df1_filter %>% filter(influenza == 'Insufficient Data')
-df1_missing
+data1 <- read.csv("data/data1.csv")
+
+# Calculating the number of missing values per column
+missing_values_counts <- colSums(is.na(data1))
+
+# Creating a data frame for ggplot
+missing_data_df <- data.frame(
+  Variable = names(missing_values_counts),
+  MissingValues = missing_values_counts
+)
+# Plotting the bar chart
+ggplot(missing_data_df, aes(x = Variable, y = MissingValues)) +
+  geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Variables", y = "Number of Missing Values", title = "Missing Data by Variable For Data1 File")
+# Create a new dataframe indicating if each value is missing
+missing_values <- data1 %>% mutate(across(-SUB.AREA, is.na))
+
+# Calculate the proportion of missing values by state for each variable
+missing_values_proportion <- missing_values %>% 
+  group_by(SUB.AREA) %>%
+  summarise(across(everything(), ~ sum(., na.rm = TRUE) / n()))
+
+# Reshape the data for the heatmap
+long_format <- melt(missing_values_proportion, id.vars = 'SUB.AREA')
+
+# Plot the heatmap
+ggplot(long_format, aes(x = variable, y = SUB.AREA, fill = value)) +
+  geom_tile() +
+  scale_fill_gradient(low = "grey", high = "red") +
+  labs(x = "Variable", y = "Sub-Area", fill = "Proportion Missing") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, size = 10),
+    axis.text.y = element_text(size = 8))
 ```
 
 In dataset 2, a lot of diseases have null values different states such as Alaska, Arkansas, Colorado, Connecticut, Delaware, District of Columbia, Hawaii, Idaho, Indiana, Iowa, Kansas, Louisiana, Maine, Maryland, Minnesota, most of which are missing in influenza and pneumonia, and abnormal clinical findings. 
 ```{r}
-head(df2_filter[!complete.cases(df2_filter),] %>% select(!c('year','week')))
+data2 <- read.csv("data/data2.csv")
+
+# Define a function to count missing values
+count_missing <- function(x) {
+  na_count <- sum(is.na(x))             # Count NA values
+  blank_count <- sum(x == "", na.rm = TRUE) # Count blank strings, remove NA from count
+  return(na_count + blank_count)
+}
+
+# Apply this function to every column in the dataframe
+missing_counts <- sapply(data2, count_missing)
+# Creating a data frame for ggplot
+variable_indices <- 1:length(missing_counts)
+missing_data_df1 <- data.frame(
+  Variable = variable_indices,
+  MissingValues = missing_counts
+)
+
+# Plotting the bar chart
+ggplot(missing_data_df1, aes(x = Variable, y = MissingValues)) +
+  geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Variable Index", y = "Number of Missing Values", title = "Missing Data by Variable For Data2 File")
+ggsave('data2missing.png')
 ```
 
 In dataset 3, it seems that Guam in "Weekly Cumulative Influenza Vaccination Coverage for Children" tends to have missing values for a few estimation variables such as point estimate, and confidence intervals while the data belongs to "Up-to-date" indicator label in "Weekly Cumulative Influenza Vaccination Coverage for Adults" are highly likely to appear missing.  
 ```{r}
-head(df3_youth_filter[!complete.cases(df3_youth_filter),])
-head(df3_adult_filter[!complete.cases(df3_adult_filter),])
+data3_adult <- read.csv("data/data3_adult.csv")
+data3_youth <- read.csv("data/data3_youth.csv")
+
+# Define a function to count missing values
+count_missing <- function(x) {
+  na_count <- sum(is.na(x))             # Count NA values
+  blank_count <- sum(x == "", na.rm = TRUE) # Count blank strings, remove NA from count
+  return(na_count + blank_count)
+}
+
+# Apply this function to every column in the dataframe
+missing_counts3a <- sapply(data3_adult, count_missing)
+missing_counts3y <- sapply(data3_youth, count_missing)
+# Creating a data frame for ggplot
+missing_data_df3a <- data.frame(
+  Variable = names(missing_counts3a),
+  MissingValues = missing_counts3a
+)
+
+# Plotting the bar chart
+ggplot(missing_data_df3a, aes(x = Variable, y = MissingValues)) +
+  geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Variables", y = "Number of Missing Values", title = "Missing Data by Variable For Data3_Adult File")
+# Creating a data frame for ggplot
+missing_data_df3y <- data.frame(
+  Variable = names(missing_counts3y),
+  MissingValues = missing_counts3y
+)
+
+# Plotting the bar chart
+ggplot(missing_data_df3y, aes(x = Variable, y = MissingValues)) +
+  geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Variables", y = "Number of Missing Values", title = "Missing Data by Variable For Data3_Youth File")
 ```
 
 
