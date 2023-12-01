@@ -70,16 +70,6 @@ data1 <- read.csv("data/data1.csv")
 # Calculating the number of missing values per column
 missing_values_counts <- colSums(is.na(data1))
 
-# Creating a data frame for ggplot
-missing_data_df <- data.frame(
-  Variable = names(missing_values_counts),
-  MissingValues = missing_values_counts
-)
-# Plotting the bar chart
-ggplot(missing_data_df, aes(x = Variable, y = MissingValues)) +
-  geom_bar(stat = "identity") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(x = "Variables", y = "Number of Missing Values", title = "Missing Data by Variable For Data1 File")
 # Create a new dataframe indicating if each value is missing
 missing_values <- data1 %>% mutate(across(-SUB.AREA, is.na))
 
