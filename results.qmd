@@ -1,5 +1,15 @@
 # Results
 
+```{r}
+library(ggplot2)
+library(dplyr)
+library(reshape2)
+library(gridExtra)
+library(tidyr)
+library(plotly)
+library(GGally)
+```
+
 ### 1. Facet graphs
 Idea: 8 subplots-seasons(years); x axis: week; y axis: # of deaths; 2 lines in each graph(one is # of influenza deaths; the other one is # of pneumonia deaths)
 
