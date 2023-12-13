@@ -6,7 +6,7 @@ Idea: 8 subplots-seasons(years); x axis: week; y axis: # of deaths; 2 lines in e
 ```{r}
 # Data4 is national wise data; Data 1 is state data
 # Read data
-data4 <- read.csv("data4.csv")
+data4 <- read.csv("data/data4.csv")
 
 # Change column names and remove unnecessary columns
 data4 <- data4 %>%
@@ -101,7 +101,7 @@ Idea: x-axis is num_influenza_death, y-axis is num_pneumonia_death
 ```{r}
 # Data1 is state wise data
 # Read data
-data1 <- read.csv("data1.csv")
+data1 <- read.csv("data/data1.csv")
 
 # Change column names and remove unnecessary columns
 data1 <- data1 %>%
@@ -227,7 +227,7 @@ ggplot(heatmap_data, aes(x = year, y = state, fill = value)) +
 ### 6. Parallel coordinate plot
 Idea: each line is a date; 10 diseases causes. (National level)
 ```{r}
-data2 <- read.csv("data2.csv")
+data2 <- read.csv("data/data2.csv")
 
 data2 <- data2 %>%
   select(occurrence = Jurisdiction.of.Occurrence,
