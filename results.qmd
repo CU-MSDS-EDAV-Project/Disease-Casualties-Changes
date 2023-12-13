@@ -1,1 +1,323 @@
 # Results
+
+### 1. Facet graphs
+Idea: 8 subplots-seasons(years); x axis: week; y axis: # of deaths; 2 lines in each graph(one is # of influenza deaths; the other one is # of pneumonia deaths)
+
+```{r}
+# Data4 is national wise data; Data 1 is state data
+# Read data
+data4 <- read.csv("data4.csv")
+
+# Change column names and remove unnecessary columns
+data4 <- data4 %>%
+  rename(
+    year = SEASON,
+    week = WEEK,
+    num_influenza_death = NUM.INFLUENZA.DEATHS,
+    num_pneumonia_death = NUM.PNEUMONIA.DEATHS,
+    num_covid_death = NUM.COVID.19.DEATHS,
+    total_pic = TOTAL.PIC,
+    total_deaths = TOTAL.DEATHS
+  ) %>%
+  select(-AREA, -SUB.AREA, -AGE.GROUP, -THRESHOLD, -BASELINE, -PERCENT.I, -PERCENT.P.I, 
+         -PERCENT.PIC, -PERCENT.COMPLETE)
+
+# Convert death count variables to numeric
+data4$num_influenza_death <- as.numeric(as.character(data4$num_influenza_death))
+data4$num_pneumonia_death <- as.numeric(gsub(",", "", data4$num_pneumonia_death))
+
+# Reshape the data to long format
+long_data <- data4 %>% 
+  select(week, year, num_influenza_death, num_pneumonia_death) %>%
+  pivot_longer(
+    cols = starts_with("num"),
+    names_to = "death_type",
+    values_to = "num_deaths"
+  )
+
+long_data <- long_data %>%
+  mutate(week_order = factor(week, levels = c(40:52, 1:39)))
+
+# Create the plot with facets for each season and lines for each death type
+ggplot(long_data, aes(x = week_order, y = num_deaths, color = death_type, group = death_type)) +
+  geom_line() +
+  facet_wrap(~ year, scales = "free_y") + 
+  theme_minimal() +
+  labs(title = "Weekly Death Counts by Type Across Years",
+       x = "Week of the Year",
+       y = "Number of Deaths") +
+  scale_color_brewer(palette = "Set1") +
+  theme(legend.position = "bottom") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
+  scale_x_discrete(breaks = function(x) seq(1, length(x), by = 4))
+```
+* What can we conclude from the plot: Covid 19 affect the number of pneumonia deaths a lot. From 2019 to 2022, we can look the scale of y axis, it dramatically increase from 4000 (first three graphs) to around 15000. However, the number of influenza death is still flat across all different year and week. ALSO, there is an interesting trend for pneumonia, winter season or the week with low temperatures might increase the deaths of pneumonia, except for 2019 to 2020.
+
+### 2. stacked bar chart
+Idea: 8 bars; x axis is year, y axis is number of deaths, stacked from three colors(one is # of influenza deaths; two is # of pneumonia deaths, three is # of covid deaths)
+
+```{r}
+# Convert character columns to numeric
+data4 <- data4 %>%
+  mutate(
+    num_covid_death = as.numeric(gsub(",", "", num_covid_death))
+  )
+
+# Aggregate the data by year to get the total deaths for each cause
+annual_deaths <- data4 %>%
+  group_by(year) %>%
+  summarise(
+    influenza_death = sum(num_influenza_death, na.rm = TRUE),
+    pneumonia_death = sum(num_pneumonia_death, na.rm = TRUE),
+    covid_death = sum(num_covid_death, na.rm = TRUE)
+  )
+
+# Reshape the data to a long format for plotting
+long_data2 <- annual_deaths %>%
+  select(year, influenza_death, pneumonia_death, covid_death) %>%
+  pivot_longer(
+    cols = c(influenza_death, pneumonia_death, covid_death),
+    names_to = "death_type",
+    values_to = "deaths"
+  )
+
+# Plot the stacked bar chart
+ggplot(long_data2, aes(x = year, y = deaths, fill = death_type)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(title = "Total Annual Deaths by Cause",
+       x = "Year",
+       y = "Number of Deaths",
+       fill = "Cause of Death") +
+  theme_minimal()
+```
+
+* What can we conclude from the plot: the number of deaths due to these three causes in year 2020-2021 is highest. 
+
+### 3. using data1, focus on state--- scatter plot
+explore relationships between the different types of death counts or between death counts and weeks.
+Idea: x-axis is num_influenza_death, y-axis is num_pneumonia_death
+(It could show if there's any correlation between the two types of deaths on a state-by-state basis over a given year). 
+
+```{r}
+# Data1 is state wise data
+# Read data
+data1 <- read.csv("data1.csv")
+
+# Change column names and remove unnecessary columns
+data1 <- data1 %>%
+  rename(
+    state = SUB.AREA,
+    year = SEASON,
+    week = WEEK,
+    num_influenza_death = NUM.INFLUENZA.DEATHS,
+    num_pneumonia_death = NUM.PNEUMONIA.DEATHS,
+    num_covid_death = NUM.COVID.19.DEATHS,
+    total_pic = TOTAL.PIC,
+    total_deaths = TOTAL.DEATHS
+  ) %>%
+  select(-AREA, -AGE.GROUP, -PERCENT.I, -PERCENT.P.I, -PERCENT.PIC, -PERCENT.COMPLETE)
+
+# Aggregate the data to get total yearly deaths by state
+yearly_deaths_by_state <- data1 %>%
+  group_by(state, year) %>%
+  summarise(
+    total_influenza_death = sum(as.numeric(gsub(",", "", num_influenza_death)), na.rm = TRUE),
+    total_pneumonia_death = sum(as.numeric(gsub(",", "", num_pneumonia_death)), na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+yearly_deaths_by_state$state <- as.factor(yearly_deaths_by_state$state)
+
+# Create an interactive scatter plot
+plot_ly(data = yearly_deaths_by_state, x = ~total_influenza_death, y = ~total_pneumonia_death, 
+        type = 'scatter', mode = 'markers',
+        color = ~state, 
+        text = ~paste('State:', state, '<br>Year:', year),  # Text to display on hover
+        hoverinfo = 'text',  # Show text on hover
+        marker = list(size = 10, opacity = 0.6)) %>%
+  layout(title = 'Total Deaths from Influenza vs. Pneumonia by State and Year',
+         xaxis = list(title = 'Total Influenza Deaths'),
+         yaxis = list(title = 'Total Pneumonia Deaths'))
+```
+
+* It is overall plot to look at the relationship between two causes of deaths
+
+### 4. D3 proposal
+Input: State and year
+Output: interactively scattetplot to look at the relationship
+
+```{r}
+# Define a function to create the plot for a specific year
+create_scatter_plot <- function(data, input_year) {
+  # Filter the data for the specified state and year
+  filtered_data <- data %>%
+    filter(year == input_year) %>%
+    group_by(state) %>%
+    summarise(
+    influenza_death = sum(as.numeric(gsub(",", "", num_influenza_death)), na.rm = TRUE),
+    pneumonia_death = sum(as.numeric(gsub(",", "", num_pneumonia_death)), na.rm = TRUE),
+      .groups = 'drop'
+    )
+  
+  filtered_data$state <- as.factor(filtered_data$state)
+  
+  # Create the scatter plot
+  plot <- plot_ly(
+    data = filtered_data,
+    x = ~influenza_death,
+    y = ~pneumonia_death,
+    type = 'scatter',
+    mode = 'markers',
+    text = ~state,  # Use week numbers as text labels
+    hoverinfo = 'text',
+    marker = list(size = 10)
+  ) %>%
+    layout(
+      title = paste('Influenza vs. Pneumonia Deaths -', input_year),
+      xaxis = list(title = 'Number of Influenza Deaths'),
+      yaxis = list(title = 'Number of Pneumonia Deaths')
+    )
+  
+  return(plot)
+}
+
+# Example usage:
+# Assuming 'data1' is your dataset
+interactive_plot <- create_scatter_plot(data1, '2021-22')
+interactive_plot
+```
+
+* By changing year, we could look at the relationship specifically. 
+
+### 5. Heatmap
+Idea: We can know which state has the highest number of deaths because of these three death causes across the year
+```{r}
+# Convert the death count columns from character to numeric
+data1 <- data1 %>%
+  mutate(
+    total_pic = as.numeric(gsub(",", "", total_pic))
+  )
+
+# Aggregate the data by state and year
+state_yearly_deaths <- data1 %>%
+  group_by(state, year) %>%
+  summarise(total_pic = sum(total_pic, na.rm = TRUE)) %>%
+  ungroup()
+
+# Reshape the data for the heatmap
+heatmap_data <- reshape2::melt(state_yearly_deaths, id.vars = c("state", "year"))
+
+# Create the heatmap
+ggplot(heatmap_data, aes(x = year, y = state, fill = value)) +
+  geom_tile() +  # Use geom_tile for heatmap squares
+  scale_fill_gradient(low = "white", high = "red") +  # Use a gradient from white to red for the fill
+  labs(title = "Heatmap of Total Deaths by State and Year",
+       x = "Year",
+       y = "State",
+       fill = "Total Deaths") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),  # Angle the x-axis text for better readability
+        axis.text.y = element_text(size = 7))  # Adjust the size of the y-axis text if needed
+```
+
+* Overall: Texas, California, Florida are three states with highest number of deaths across years, especially in 2020-2021 Texas and California have the brighter red. 
+
+* whether we can use Texas and California to do the mosaic plot
+
+### 6. Parallel coordinate plot
+Idea: each line is a date; 10 diseases causes. (National level)
+```{r}
+data2 <- read.csv("data2.csv")
+
+data2 <- data2 %>%
+  select(occurrence = Jurisdiction.of.Occurrence,
+         year = MMWR.Year,
+         week = MMWR.Week,
+         date = Week.Ending.Date,
+         all_cause = All.Cause,
+         natural_cause = Natural.Cause,
+         septicemia = Septicemia..A40.A41.,
+         malignant_neoplasms = Malignant.neoplasms..C00.C97.,
+         diabetes_mellitus = Diabetes.mellitus..E10.E14.,
+         alzheimer = Alzheimer.disease..G30.,
+         influenza_pneumonia = Influenza.and.pneumonia..J09.J18.,
+         chronic_respiratory = Chronic.lower.respiratory.diseases..J40.J47.,
+         other_respiratory = Other.diseases.of.respiratory.system..J00.J06.J30.J39.J67.J70.J98.,
+         nephritis = Nephritis..nephrotic.syndrome.and.nephrosis..N00.N07.N17.N19.N25.N27.,
+         non_classified = Symptoms..signs.and.abnormal.clinical.and.laboratory.findings..not.elsewhere.classified..R00.R99.,
+         heart_diseases = Diseases.of.heart..I00.I09.I11.I13.I20.I51.,
+         cerebrovascular = Cerebrovascular.diseases..I60.I69.,
+         covid19_multiple = COVID.19..U071..Multiple.Cause.of.Death.,
+         covid19_underlying = COVID.19..U071..Underlying.Cause.of.Death.)
+
+# Choose ten specific diseases, including septicemia, malignant_neoplasms, diabetes_mellitus, alzheimer, influenza_pneumonia, combined respiratory, nephritis, heart_diseases, cerebrovascular, covid19)
+
+# Combine column1 and column2 into a new column called combined
+data2 <- data2 %>%
+  mutate(combined_respiratory = chronic_respiratory + other_respiratory,
+         combined_covid19 = covid19_multiple + covid19_underlying)
+
+```
+
+```{r}
+new_data2 <- data2 %>%
+  filter(occurrence == 'United States')
+```
+
+```{r}
+fig <- plot_ly(type = 'parcoords',
+               line = list(color = as.integer(as.factor(new_data2$date))),
+               dimensions = list(
+                 list(label = 'Septicemia', values = new_data2$septicemia),
+                 list(label = 'Malignant Neoplasms', values = new_data2$malignant_neoplasms),
+                 list(label = 'Diabetes Mellitus', values = new_data2$diabetes_mellitus),
+                 list(label = 'Alzheimer', values = new_data2$alzheimer),
+                 list(label = 'Influenza Pneumonia', values = new_data2$influenza_pneumonia),
+                 list(label = 'Chronic Respiratory', values = new_data2$combined_respiratory),
+                 list(label = 'Nephritis', values = new_data2$nephritis),
+                 list(label = 'Heart Diseases', values = new_data2$heart_diseases),
+                 list(label = 'Cerebrovascular', values = new_data2$cerebrovascular),
+                 list(label = 'COVID-19', values = new_data2$combined_covid19)
+               )) %>% layout(
+  title = "Parallel Coordinates Plot for Causes of Death",
+  font = list(size = 9)  # Adjust font size
+               )
+
+# Show the plot
+fig
+```
+
+### 7. Facet scatterplot: look at the relationships between any 2 diseases. 10*10
+Idea: Scatterplot matrix
+```{r}
+filtered_data2 <- data2 %>%
+  filter(year == '2020', occurrence == 'United States')
+```
+
+```{r}
+selected_data <- filtered_data2 %>%
+  select(septicemia, malignant_neoplasms, diabetes_mellitus, alzheimer, 
+         influenza_pneumonia, combined_respiratory, nephritis, heart_diseases, 
+         cerebrovascular, combined_covid19)
+
+# Create the scatter plot matrix
+plot <- ggpairs(selected_data,
+        title = "Scatter Plot Matrix for Disease Relationships",
+        upper = list(continuous = wrap("cor", size = 3)), # Correlation in upper panels with smaller text
+        lower = list(continuous = wrap("points", size = 0.3, alpha = 0.5)), # Points in lower panels with alpha blending
+        diag = list(continuous = wrap("densityDiag", size = 0.5))) # Diagonal density plots with smaller text)
+
+# Customize the plot to improve readability of labels
+plot <- plot +
+  theme(
+    # Rotate the text for x and y axis labels to avoid overlap
+    axis.text.x = element_text(vjust = 1, hjust = 1, size = 3.5),
+    axis.text.y = element_text(vjust = 1, hjust = 1, size = 5),
+    axis.title.x = element_text(size = 5),
+    axis.title.y = element_text(size = 7),
+    strip.text = element_text(size = 5)
+  )
+
+# Render the plot
+plot
+```
