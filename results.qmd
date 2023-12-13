@@ -10,7 +10,7 @@ library(plotly)
 library(GGally)
 ```
 
-### 1. Facet graphs
+## Facet graphs
 Idea: 8 subplots-seasons(years); x axis: week; y axis: # of deaths; 2 lines in each graph(one is # of influenza deaths; the other one is # of pneumonia deaths)
 
 ```{r}
@@ -63,7 +63,7 @@ ggplot(long_data, aes(x = week_order, y = num_deaths, color = death_type, group 
 ```
 * What can we conclude from the plot: Covid 19 affect the number of pneumonia deaths a lot. From 2019 to 2022, we can look the scale of y axis, it dramatically increase from 4000 (first three graphs) to around 15000. However, the number of influenza death is still flat across all different year and week. ALSO, there is an interesting trend for pneumonia, winter season or the week with low temperatures might increase the deaths of pneumonia, except for 2019 to 2020.
 
-### 2. stacked bar chart
+## stacked bar chart
 Idea: 8 bars; x axis is year, y axis is number of deaths, stacked from three colors(one is # of influenza deaths; two is # of pneumonia deaths, three is # of covid deaths)
 
 ```{r}
@@ -103,7 +103,7 @@ ggplot(long_data2, aes(x = year, y = deaths, fill = death_type)) +
 
 * What can we conclude from the plot: the number of deaths due to these three causes in year 2020-2021 is highest. 
 
-### 3. using data1, focus on state--- scatter plot
+## using data1, focus on state--- scatter plot
 explore relationships between the different types of death counts or between death counts and weeks.
 Idea: x-axis is num_influenza_death, y-axis is num_pneumonia_death
 (It could show if there's any correlation between the two types of deaths on a state-by-state basis over a given year). 
@@ -152,7 +152,7 @@ plot_ly(data = yearly_deaths_by_state, x = ~total_influenza_death, y = ~total_pn
 
 * It is overall plot to look at the relationship between two causes of deaths
 
-### 4. D3 proposal
+## D3 proposal
 Input: State and year
 Output: interactively scattetplot to look at the relationship
 
@@ -199,7 +199,7 @@ interactive_plot
 
 * By changing year, we could look at the relationship specifically. 
 
-### 5. Heatmap
+## Heatmap
 Idea: We can know which state has the highest number of deaths because of these three death causes across the year
 ```{r}
 # Convert the death count columns from character to numeric
@@ -234,7 +234,7 @@ ggplot(heatmap_data, aes(x = year, y = state, fill = value)) +
 
 * whether we can use Texas and California to do the mosaic plot
 
-### 6. Parallel coordinate plot
+## Parallel coordinate plot
 Idea: each line is a date; 10 diseases causes. (National level)
 ```{r}
 data2 <- read.csv("data/data2.csv")
@@ -297,7 +297,7 @@ fig <- plot_ly(type = 'parcoords',
 fig
 ```
 
-### 7. Facet scatterplot: look at the relationships between any 2 diseases. 10*10
+## Facet scatterplot: look at the relationships between any 2 diseases. 10*10
 Idea: Scatterplot matrix
 ```{r}
 filtered_data2 <- data2 %>%
