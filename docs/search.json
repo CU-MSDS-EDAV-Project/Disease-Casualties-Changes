@@ -159,5 +159,12 @@
     "title": "3  Results",
     "section": "3.10 Mosaic: age, 2 state",
     "text": "3.10 Mosaic: age, 2 state\nPick CA and TX\n\n\nCode\n# Filter for Texas and California and for the specific years\naggregated_data &lt;- combined_data3_state %&gt;%\n  filter(national_state %in% c(\"Texas\", \"California\"),\n         year %in% c(\"2019-2020\", \"2020-2021\", \"2021-2022\")) %&gt;%\n  group_by(national_state, age_group, year) %&gt;%\n  summarise(total_number = sum(number, na.rm = TRUE)) %&gt;%\n  ungroup()\n\n# Create the contingency table\ncontingency_table &lt;- xtabs(total_number ~ national_state + year + age_group, data = aggregated_data)\n\n# Create the mosaic plot with horizontal year labels\nmosaic(contingency_table, main=\"Mosaic plot of Vaccine Data\")"
+  },
+  {
+    "objectID": "d3graph.html",
+    "href": "d3graph.html",
+    "title": "4  Interactive graph",
+    "section": "",
+    "text": "Code\nlibrary(dplyr)\n\n# Read data\ndata1 &lt;- read.csv(\"data/data1.csv\")\n\n# Change column names and remove unnecessary columns\ndata1_processed &lt;- data1 %&gt;%\n  rename(\n    state = SUB.AREA,\n    year = SEASON,\n    week = WEEK,\n    num_influenza_death = NUM.INFLUENZA.DEATHS,\n    num_pneumonia_death = NUM.PNEUMONIA.DEATHS,\n    num_covid_death = NUM.COVID.19.DEATHS,\n    total_pic = TOTAL.PIC,\n    total_deaths = TOTAL.DEATHS\n  ) %&gt;%\n  select(-AREA, -AGE.GROUP, -PERCENT.I, -PERCENT.P.I, -PERCENT.PIC, -PERCENT.COMPLETE)\n\n# Save the processed data to a new CSV file\nwrite.csv(data1_processed, \"data/processed_data1.csv\", row.names = FALSE)\n\n\nThis scatter plot changes based on the selected year.\n\n\n\n  Select Year:"
   }
 ]

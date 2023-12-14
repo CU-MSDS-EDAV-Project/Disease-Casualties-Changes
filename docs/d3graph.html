@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.3.433">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -138,13 +172,7 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#div-plot" id="toc-div-plot" class="nav-link active" data-scroll-target="#div-plot"><span class="header-section-number">4.1</span> Div plot</a></li>
-  </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/CU-MSDS-EDAV-Project/Disease-Casualties-Changes/edit/main/d3graph.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/CU-MSDS-EDAV-Project/Disease-Casualties-Changes/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -166,32 +194,97 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<style>
-  * {
-    font-family: sans-serif;
-  }
-</style>
-<section id="div-plot" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="div-plot"><span class="header-section-number">4.1</span> Div plot</h2>
-<button onclick="update(data1)">
-Dataset 1
-</button>
-<button onclick="update(data2)">
-Dataset 2
-</button>
-<div id="plot">
-<!-- <svg id="withaxes" width="600" height="400"> </svg> -->
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Read data</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/data1.csv"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Change column names and remove unnecessary columns</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>data1_processed <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">state =</span> SUB.AREA,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> SEASON,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">week =</span> WEEK,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_influenza_death =</span> NUM.INFLUENZA.DEATHS,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_pneumonia_death =</span> NUM.PNEUMONIA.DEATHS,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_covid_death =</span> NUM.COVID.<span class="fl">19.</span>DEATHS,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_pic =</span> TOTAL.PIC,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_deaths =</span> TOTAL.DEATHS</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>AREA, <span class="sc">-</span>AGE.GROUP, <span class="sc">-</span>PERCENT.I, <span class="sc">-</span>PERCENT.P.I, <span class="sc">-</span>PERCENT.PIC, <span class="sc">-</span>PERCENT.COMPLETE)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the processed data to a new CSV file</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(data1_processed, <span class="st">"data/processed_data1.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
-<p>
-</p>
-<!-- <button type="button" onclick="add()">Add bar</button> -->
-<!-- <button type="button" onclick="remove()">Remove bar</button> -->
-<p>The idea and mechanism of the interactivity plot comes from <a href="https://d3-graph-gallery.com/graph/line_change_data.html">d3 Graph Gallery</a> with combination of <a href="https://jtr13.github.io/d3book/line-charts.html"> course d3 website</a>.</p>
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-<script src="scripts/myscript.js"></script>
+<p>This scatter plot changes based on the selected year.</p>
+<!-- D3.js Script -->
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<div>
+  <label for="yearSelector">Select Year:</label>
+  <select id="yearSelector"></select>
+</div>
+<div id="scatterplot" style="width: 600px; height: 400px;"></div>
+<script>
+// Load the preprocessed data from the CSV file
+d3.csv("data/processed_data1.csv").then(function(data) {
+  // Populate year selector
+  var years = Array.from(new Set(data.map(d => d.year)));
+  var selector = d3.select("#yearSelector");
+  selector.selectAll("option")
+    .data(years)
+    .enter()
+    .append("option")
+    .text(d => d)
+    .attr("value", d => d);
+
+  // Function to update the scatter plot
+  function updateScatterPlot(selectedYear) {
+  // Filter data for the selected year
+  var filteredData = data.filter(d => d.year === selectedYear);
+
+  // Define the scales
+  var xScale = d3.scaleLinear()
+                 .domain([0, d3.max(filteredData, d => +d.num_influenza_death)])
+                 .range([0, 600]);
+
+  var yScale = d3.scaleLinear()
+                 .domain([0, d3.max(filteredData, d => +d.num_pneumonia_death)])
+                 .range([400, 0]);
+
+  // Select the SVG element, if it exists, and bind the data
+  var svg = d3.select("#scatterplot").selectAll("svg").data([null]);
+  svg = svg.enter().append("svg").merge(svg)
+            .attr("width", 600)
+            .attr("height", 400);
+
+  // Bind filtered data to circles and update the scatter plot
+  var circles = svg.selectAll("circle")
+                   .data(filteredData, d => d.state);
+
+  circles.enter().append("circle")
+          .merge(circles)
+          .attr("cx", d => xScale(+d.num_influenza_death))
+          .attr("cy", d => yScale(+d.num_pneumonia_death))
+          .attr("r", 5);
+
+  circles.exit().remove();
+}
+
+  // Initialize the scatter plot with the first year selected
+  updateScatterPlot(years[0]);
+
+  // Update the plot when a new year is selected
+  selector.on("change", function() {
+    updateScatterPlot(this.value);
+  });
+});
+</script>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -447,7 +540,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>   
     <div class="nav-footer-center">
       &nbsp;
-    </div>
+    <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/CU-MSDS-EDAV-Project/Disease-Casualties-Changes/edit/main/d3graph.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/CU-MSDS-EDAV-Project/Disease-Casualties-Changes/issues/new" class="toc-action">Report an issue</a></p></div></div></div>
     <div class="nav-footer-right">This book was built with <a href="https://quarto.org/">Quarto</a>.</div>
   </div>
 </footer>

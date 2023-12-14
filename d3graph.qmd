@@ -1,26 +1,94 @@
 # Interactive graph
 
-<style>
-  * {
-    font-family: sans-serif;
-  }
-</style> 
+```{r}
+library(dplyr)
 
-## Div plot
+# Read data
+data1 <- read.csv("data/data1.csv")
 
-<button onclick="update(data1)">Dataset 1</button>
-<button onclick="update(data2)">Dataset 2</button>
-<div id="plot">
-<!-- <svg id="withaxes" width="600" height="400"> </svg> -->
+# Change column names and remove unnecessary columns
+data1_processed <- data1 %>%
+  rename(
+    state = SUB.AREA,
+    year = SEASON,
+    week = WEEK,
+    num_influenza_death = NUM.INFLUENZA.DEATHS,
+    num_pneumonia_death = NUM.PNEUMONIA.DEATHS,
+    num_covid_death = NUM.COVID.19.DEATHS,
+    total_pic = TOTAL.PIC,
+    total_deaths = TOTAL.DEATHS
+  ) %>%
+  select(-AREA, -AGE.GROUP, -PERCENT.I, -PERCENT.P.I, -PERCENT.PIC, -PERCENT.COMPLETE)
+
+# Save the processed data to a new CSV file
+write.csv(data1_processed, "data/processed_data1.csv", row.names = FALSE)
+```
+
+This scatter plot changes based on the selected year.
+
+```{=html}
+<!-- D3.js Script -->
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<div>
+  <label for="yearSelector">Select Year:</label>
+  <select id="yearSelector"></select>
 </div>
+<div id="scatterplot" style="width: 600px; height: 400px;"></div>
+<script>
+// Load the preprocessed data from the CSV file
+d3.csv("data/processed_data1.csv").then(function(data) {
+  // Populate year selector
+  var years = Array.from(new Set(data.map(d => d.year)));
+  var selector = d3.select("#yearSelector");
+  selector.selectAll("option")
+    .data(years)
+    .enter()
+    .append("option")
+    .text(d => d)
+    .attr("value", d => d);
 
-<p></p>
-<!-- <button type="button" onclick="add()">Add bar</button> -->
-<!-- <button type="button" onclick="remove()">Remove bar</button> -->
+  // Function to update the scatter plot
+  function updateScatterPlot(selectedYear) {
+  // Filter data for the selected year
+  var filteredData = data.filter(d => d.year === selectedYear);
 
-The idea and mechanism of the interactivity plot comes from <a href=https://d3-graph-gallery.com/graph/line_change_data.html>d3 Graph Gallery</a>  with combination of <a href=https://jtr13.github.io/d3book/line-charts.html> course d3 website</a>.
+  // Define the scales
+  var xScale = d3.scaleLinear()
+                 .domain([0, d3.max(filteredData, d => +d.num_influenza_death)])
+                 .range([0, 600]);
+
+  var yScale = d3.scaleLinear()
+                 .domain([0, d3.max(filteredData, d => +d.num_pneumonia_death)])
+                 .range([400, 0]);
+
+  // Select the SVG element, if it exists, and bind the data
+  var svg = d3.select("#scatterplot").selectAll("svg").data([null]);
+  svg = svg.enter().append("svg").merge(svg)
+            .attr("width", 600)
+            .attr("height", 400);
+
+  // Bind filtered data to circles and update the scatter plot
+  var circles = svg.selectAll("circle")
+                   .data(filteredData, d => d.state);
+
+  circles.enter().append("circle")
+          .merge(circles)
+          .attr("cx", d => xScale(+d.num_influenza_death))
+          .attr("cy", d => yScale(+d.num_pneumonia_death))
+          .attr("r", 5);
+
+  circles.exit().remove();
+}
+
+  // Initialize the scatter plot with the first year selected
+  updateScatterPlot(years[0]);
+
+  // Update the plot when a new year is selected
+  selector.on("change", function() {
+    updateScatterPlot(this.value);
+  });
+});
+</script>
+```
 
 
-
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-<script src="scripts/myscript.js"></script>
