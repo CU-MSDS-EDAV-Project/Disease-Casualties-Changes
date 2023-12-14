@@ -9,6 +9,9 @@ library(tidyr)
 library(plotly)
 library(GGally)
 library(ggridges)
+library(choroplethr)
+library(choroplethrMaps)
+library(vcd)
 ```
 
 
@@ -213,8 +216,8 @@ ggplot(heatmap_data, aes(x = year, y = state, fill = value)) +
        y = "State",
        fill = "Total Deaths") +
   theme_minimal() +
-  theme(axis.text.x = element_text(hjust = 1),  # Angle the x-axis text for better readability
-        axis.text.y = element_text(size = 7))  # Adjust the size of the y-axis text if needed
+  theme(axis.text.x = element_text(hjust = 1),  
+        axis.text.y = element_text(size = 7)) 
 ```
 * Overall Texas, California, Florida are three states with highest number of deaths across years, especially in 2020-2021 Texas and California have the brighter red which implies more total deaths. This result and conclusion confirm our suspect that these three states are outliers in some sense and meanwhile explain why they are further away from the axes in the previous graph. 
 
@@ -308,7 +311,7 @@ plot <- plot +
 plot
 ```
 
-## Data3 combining
+## Boxplot: trendency by year (adult+youth)
 
 ```{r}
 # Read data3_adult
@@ -317,18 +320,185 @@ data3_adult <- read.csv("data/data3_adult.csv")
 # Change format "Month_Week" column (only extract the month)
 data3_adult$Month_Week <- sub(" .*", "", data3_adult$Month_Week)
 
+# Select necessary columns and rename them
+data3_adult <- data3_adult %>%
+  select(g_level = Geographic_Level,
+         national_state = Geographic_Name,
+         age = Demographic_Name,
+         whether_vaccined = Indicator_Category_Label,
+         month = Month_Week,
+         year = Influenza_Season,
+         number = n_unweighted)
+
+# Apply multiple filters
+data3_adult_national <- data3_adult %>%
+  filter(g_level == "National") %>%
+  filter(age %in% c("18-49 years", "50-64 years", "65-74 years", "75+ years")) %>%
+  filter(whether_vaccined == "Yes")
+
+# data3_adult_state: age-18+ years
+data3_adult_state <- data3_adult %>%
+  filter(g_level == "State") %>%
+  filter(whether_vaccined == "Yes")
+
 # Read data3_youth
 data3_youth <- read.csv("data/data3_youth.csv")
 
 # Change format "Month_Week" column (only extract the month)
 data3_youth$Month_Week <- sub(" .*", "", data3_youth$Month_Week)
 
-```
+# Select necessary columns and rename them
+data3_youth <- data3_youth %>%
+  select(g_level = geography_level,
+         national_state = Geography_Name,
+         age = Demographic_Name,
+         month = Month_Week,
+         year = Influenza_Season,
+         number = n_unweighted)
 
-## Boxplot: trendency by year (adult+youth)
+# Apply multiple filters
+data3_youth_national <- data3_youth %>%
+  filter(g_level == "National") %>%
+  filter(age %in% c("6 months-4 years", "5-12 years", "13-17 years"))
+
+# data3_youth_state: no specific age range-Overall
+data3_youth_state <- data3_youth %>%
+  filter(g_level == "State")
+
+# Add column to data3_youth, data3_youth_national, data3_youth_state
+data3_youth <- data3_youth %>%
+  mutate(whether_vaccined = "Yes")
+data3_youth_national <- data3_youth_national %>%
+  mutate(whether_vaccined = "Yes")
+data3_youth_state <- data3_youth_state %>%
+  mutate(whether_vaccined = "Yes")
+
+# Combine data3_youth with data3_adult
+# Combine data3_youth_national with data3_adult_national
+# Combine data3_youth_state with data3_adult_state
+combined_data3 <- rbind(data3_adult, data3_youth)
+combined_data3_national <- rbind(data3_adult_national, data3_youth_national)
+combined_data3_state <- rbind(data3_adult_state, data3_youth_state)
+
+# Add a new column based on age column value
+combined_data3_state <- combined_data3_state %>%
+  mutate(age_group = case_when(
+    age == "18+ years" ~ "adult",
+    TRUE ~ "youth"
+  ))
+
+# Add a new column based on age groups for combined_data3_national dataframe
+combined_data3_national <- combined_data3_national %>%
+  mutate(age_group = case_when(
+    age %in% c("18-49 years", "50-64 years", "65-74 years", "75+ years") ~ "adult",
+    TRUE ~ "youth"
+  ))
+
+# Combine combined_data3_state and combined_data3_national to draw boxplot
+# Combine the dataframes
+combined_data_bar<- bind_rows(combined_data3_national, combined_data3_state)
+
+# Create the combined category column
+combined_data_bar <- combined_data_bar %>%
+  mutate(combined_category = ifelse(g_level == "National",
+                                    ifelse(age_group == "adult", "national-adult", "national-youth"),
+                                    ifelse(age_group == "adult", "state-adult", "state-youth")))
+
+# Group by year, month, and combined category, then summarize to get total count per group
+combined_data_summarized <- combined_data_bar %>%
+  group_by(year, combined_category) %>%
+  summarise(total = sum(number, na.rm = TRUE)) %>%
+  ungroup()
+
+# Plot the bar plot with groups
+ggplot(combined_data_summarized, aes(x = year, y = total, fill = combined_category, group = combined_category)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "Year", y = "Total Number", fill = "Category") +
+  scale_fill_brewer(palette = "Set1") +
+  theme(axis.text.x = element_text(hjust = 0.5),
+        legend.position = "bottom")
+```
 
 ## Spatial Data(one death one vaccination-state): answer which state recive most vaccination
 
+```{r}
+# Filter for the year 2021-2022 and sum vaccinations by state
+vaccination_data_2021_2022 <- combined_data3_state %>%
+  filter(year == "2021-2022") %>%
+  group_by(national_state) %>%
+  summarise(total_vaccinations = sum(number, na.rm = TRUE)) %>%
+  ungroup()
+
+#  Prepare the data for choroplethr
+vaccination_data_2021_2022 <- vaccination_data_2021_2022 %>%
+  mutate(region = tolower(national_state)) %>%
+  select(region, value = total_vaccinations)
+
+# Create the map
+map2 <- state_choropleth(vaccination_data_2021_2022, 
+                 title = "2021-2022 State Vaccination", 
+                 legend = "Total Vaccinations")
+```
+```{r}
+# Data1 is state wise data
+# Read data
+data1 <- read.csv("data/data1.csv")
+
+# Change column names and remove unnecessary columns
+data1_map <- data1 %>%
+  rename(
+    state = SUB.AREA,
+    year = SEASON,
+    week = WEEK,
+    num_influenza_death = NUM.INFLUENZA.DEATHS,
+    num_pneumonia_death = NUM.PNEUMONIA.DEATHS,
+    num_covid_death = NUM.COVID.19.DEATHS,
+    total_pic = TOTAL.PIC,
+    total_deaths = TOTAL.DEATHS
+  ) %>%
+  select(-AREA, -AGE.GROUP, -PERCENT.I, -PERCENT.P.I, -PERCENT.PIC, -PERCENT.COMPLETE)
+
+# Now, filter the data for the year 2020-2021
+state_deaths_2020_2021 <- data1_map %>%
+  filter(year == "2020-21") %>%
+  group_by(state) %>%
+  summarise(total_pic = sum(as.numeric(gsub(",", "", total_pic)), na.rm = TRUE)) %>%
+  ungroup()
+
+# Prepare the data for choroplethr
+# The region column must be named "region" and the values must be named "value"
+state_deaths_2020_2021 <- state_deaths_2020_2021 %>%
+  mutate(region = tolower(state), value = total_pic) %>%
+  select(region, value)
+
+# Create the choropleth map
+map1 <- state_choropleth(state_deaths_2020_2021,
+                 title = "2020-2021 Total Deaths by State",
+                 legend = "Total Deaths")
+```
+
+```{r}
+# Combine the two maps with map2 (deaths) on top
+combined_map <- grid.arrange(map1, map2, ncol = 1, heights = c(5,5))
+```
+
 ## Mosaic: age, 2 state
+Pick CA and TX
+
+```{r}
+# Filter for Texas and California and for the specific years
+aggregated_data <- combined_data3_state %>%
+  filter(national_state %in% c("Texas", "California"),
+         year %in% c("2019-2020", "2020-2021", "2021-2022")) %>%
+  group_by(national_state, age_group, year) %>%
+  summarise(total_number = sum(number, na.rm = TRUE)) %>%
+  ungroup()
+
+# Create the contingency table
+contingency_table <- xtabs(total_number ~ national_state + year + age_group, data = aggregated_data)
+
+# Create the mosaic plot with horizontal year labels
+mosaic(contingency_table, main="Mosaic plot of Vaccine Data")
+```
 
 
