@@ -20,7 +20,27 @@ data1_processed <- data1 %>%
   ) %>%
   select(-AREA, -AGE.GROUP, -PERCENT.I, -PERCENT.P.I, -PERCENT.PIC, -PERCENT.COMPLETE)
 
+data1_processed <- data1_processed %>%
+  mutate(
+    num_influenza_death = gsub(",", "", num_influenza_death),
+    num_pneumonia_death = gsub(",", "", num_pneumonia_death)
+  )
+
+yearly_deaths_by_state <- data1_processed %>%
+  mutate(
+    num_influenza_death = as.numeric(num_influenza_death),
+    num_pneumonia_death = as.numeric(num_pneumonia_death)
+  ) %>%
+  group_by(state, year) %>%
+  summarise(
+    total_influenza_death = sum(num_influenza_death, na.rm = TRUE),
+    total_pneumonia_death = sum(num_pneumonia_death, na.rm = TRUE),
+    .groups = 'drop'
+  )
+
 # Save the processed data to a new CSV file
-write.csv(data1_processed, "data/processed_data1.csv", row.names = FALSE)
+write.csv(data1_processed, "data/yearly_deaths_by_state.csv", row.names = FALSE)
 ```
+
+
 
