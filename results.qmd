@@ -75,36 +75,14 @@ ggplot(long_data_line, aes(x = year, y = deaths, color = cause, group = cause)) 
   theme_minimal()
 
 ```
-From the line chart above, we can see that pneumonia seems to follow the trends of COVID-19 but influenza doesn't throughout the time span from before to after the outbreak. Hence, it would be impetuous to conclude that diseases with similar transmission methods follow the same trends in casualties at the moment.
+* From the line chart above, we can see that pneumonia seems to follow the trends of COVID-19 but influenza doesn't throughout the time span from before to after the outbreak. Hence, it would be impetuous to conclude that diseases with similar transmission methods follow the same trends in casualties at the moment.
 
 ## Is The Trend We Observed Above An Coincidence?
 To confirm our observation above, we need to dive further into the dataset individually for influenza and pneumonia year by year starting from 2016 till this year. We do so by generating a faceted plot on years, where x axis denotes week within the year; y axis denotes the number of deaths; the two lines representing the number of influenza deaths and pneumonia deaths
 
 ```{r}
-# Data4 is national wise data; Data 1 is state data
-# Read data
-data4 <- read.csv("data/data4.csv")
-
-# Change column names and remove unnecessary columns
-data4 <- data4 %>%
-  rename(
-    year = SEASON,
-    week = WEEK,
-    num_influenza_death = NUM.INFLUENZA.DEATHS,
-    num_pneumonia_death = NUM.PNEUMONIA.DEATHS,
-    num_covid_death = NUM.COVID.19.DEATHS,
-    total_pic = TOTAL.PIC,
-    total_deaths = TOTAL.DEATHS
-  ) %>%
-  select(-AREA, -SUB.AREA, -AGE.GROUP, -THRESHOLD, -BASELINE, -PERCENT.I, -PERCENT.P.I, 
-         -PERCENT.PIC, -PERCENT.COMPLETE)
-
-# Convert death count variables to numeric
-data4$num_influenza_death <- as.numeric(as.character(data4$num_influenza_death))
-data4$num_pneumonia_death <- as.numeric(gsub(",", "", data4$num_pneumonia_death))
-
 # Reshape the data to long format
-long_data <- data4 %>% 
+long_data_line2 <- data4 %>% 
   select(week, year, num_influenza_death, num_pneumonia_death) %>%
   pivot_longer(
     cols = starts_with("num"),
@@ -112,11 +90,11 @@ long_data <- data4 %>%
     values_to = "num_deaths"
   )
 
-long_data <- long_data %>%
+long_data_line2 <- long_data_line2 %>%
   mutate(week_order = factor(week, levels = c(40:52, 1:39)))
 
-# Create the plot with facets for each season and lines for each death type
-ggplot(long_data, aes(x = week_order, y = num_deaths, color = death_type, group = death_type)) +
+# Create the plot with facets for each season and lines for two death types
+ggplot(long_data_line2, aes(x = week_order, y = num_deaths, color = death_type, group = death_type)) +
   geom_line() +
   facet_wrap(~ year, scales = "free_y") + 
   theme_minimal() +
@@ -125,41 +103,26 @@ ggplot(long_data, aes(x = week_order, y = num_deaths, color = death_type, group 
        y = "Number of Deaths") +
   scale_color_brewer(palette = "Set1") +
   theme(legend.position = "bottom") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
   scale_x_discrete(breaks = function(x) seq(1, length(x), by = 4))
 ```
-From the faceted plots above, we can see that COVID-19 affects the number of pneumonia deaths a great deal. Looking at the scale of y axis from 2019 to 2022, we observed that it dramatically increase from 4000 (first three graphs) to around 15000. However, the number of influenza death is still consistently flat across all different year and week. Meanwhile, there is an interesting trend for pneumonia where winter season or the week with low temperatures might increase the deaths of pneumonia, except for 2019 to 2020. Note that the last graph only shows a portion because we count year starting from end of a year till the end of the following year so it makes sense that it only shows a little since we are currently at the end of 2023 it just started recording the data for a whole new year. 
+* From the faceted plots above, we can see that COVID-19 affects the number of pneumonia deaths a great deal. Looking at the scale of y axis from 2019 to 2022, we observed that it dramatically increase from 4000 (first three graphs) to around 15000. However, the number of influenza death is still consistently flat across all different year and week. Meanwhile, there is an interesting trend for pneumonia where winter season or the week with low temperatures might increase the deaths of pneumonia, except for 2019 to 2020. Note that the last graph only shows a portion because we count year starting from end of a year till the end of the following year so it makes sense that it only shows a little since we are currently at the end of 2023 it just started recording the data for a whole new year. 
 
 ## How Are Casualties Distributed Across These Three Diseases?
 Knowing the trends individually gives us partial idea on the deaths of each disease. We cannot tell whether casualties of certain number is considered fortune or critical given the surroundings at the moment. Hence, it is more worthwhile to put them together and compare their relative proportion over the timeline. We achieve this objective through stacked bar charts where x axis is year; y axis is number of deaths and bar charts are stacked from three colors with each representing the death of COVID, influenza and pneumonia.
 
 ```{r}
-# Convert character columns to numeric
-data4 <- data4 %>%
-  mutate(
-    num_covid_death = as.numeric(gsub(",", "", num_covid_death))
-  )
-
-# Aggregate the data by year to get the total deaths for each cause
-annual_deaths <- data4 %>%
-  group_by(year) %>%
-  summarise(
-    influenza_death = sum(num_influenza_death, na.rm = TRUE),
-    pneumonia_death = sum(num_pneumonia_death, na.rm = TRUE),
-    covid_death = sum(num_covid_death, na.rm = TRUE)
-  )
-
 # Reshape the data to a long format for plotting
-long_data2 <- annual_deaths %>%
-  select(year, influenza_death, pneumonia_death, covid_death) %>%
+long_data_stacked <- total_deaths %>%
+  select(year, total_influenza_death, total_pneumonia_death, total_covid_death) %>%
   pivot_longer(
-    cols = c(influenza_death, pneumonia_death, covid_death),
+    cols = c(total_influenza_death, total_pneumonia_death, total_covid_death),
     names_to = "death_type",
     values_to = "deaths"
   )
 
 # Plot the stacked bar chart
-ggplot(long_data2, aes(x = year, y = deaths, fill = death_type)) +
+ggplot(long_data_stacked, aes(x = year, y = deaths, fill = death_type)) +
   geom_bar(stat = "identity", position = "stack") +
   labs(title = "Total Annual Deaths by Cause",
        x = "Year",
@@ -167,8 +130,7 @@ ggplot(long_data2, aes(x = year, y = deaths, fill = death_type)) +
        fill = "Cause of Death") +
   theme_minimal()
 ```
-
-Based on the result above, it quite obvious that the number of deaths due to these three causes in year 2020-2021 is the highest, which is consistent with our previous conclusion on the general trends of the three disease since pneuomonia follows the same trends as COVID-19 while influenza stays relatively low the cumulative result of the three will end up with a huge peak at the year 2020 to 2021. On the other hand, if we take a look at the proportion of the deaths we can see that there's actually a drastic increase in proportion of deaths in COVID and decrease for pneumonia even though the total number of deaths in pneumonia still decreased. Specifically, the deaths of COVID even reached more than 50% of deaths among the three and then decreased after the outbreak. Interestingly, we notice that there seems to be some slight increase in the number of deaths in pneumonia last year from 2022 to 2023 as compared to pre-COVID period before 2020. However, it is still ambiguous at the moment to say if there are certain changes in deaths due to the outbreak of COVID since the pattern observed last year might still be the remain consequenes of COVID. It would be more accurate to make further inference if we have the data for 2023 to 2024 by hand and compare it to last year and the year before the outbreak. 
+* Based on the result above, it quite obvious that the number of deaths due to these three causes in year 2020-2021 is the highest, which is consistent with our previous conclusion on the general trends of the three disease since pneuomonia follows the same trends as COVID-19 while influenza stays relatively low the cumulative result of the three will end up with a huge peak at the year 2020 to 2021. On the other hand, if we take a look at the proportion of the deaths we can see that there's actually a drastic increase in proportion of deaths in COVID and decrease for pneumonia even though the total number of deaths in pneumonia still decreased. Specifically, the deaths of COVID even reached more than 50% of deaths among the three and then decreased after the outbreak. Interestingly, we notice that there seems to be some slight increase in the number of deaths in pneumonia last year from 2022 to 2023 as compared to pre-COVID period before 2020. However, it is still ambiguous at the moment to say if there are certain changes in deaths due to the outbreak of COVID since the pattern observed last year might still be the remain consequenes of COVID. It would be more accurate to make further inference if we have the data for 2023 to 2024 by hand and compare it to last year and the year before the outbreak. 
 
 ## How Are Casualties Reflected in Each State?
 After exploring national trends for these three diseases, we would like to know more about the relationships between the different types of death counts and also the relationnship between death counts and year over state level. We created a ggplotly interactive plot where x-axis is num_influenza_death, y-axis is num_pneumonia_death and the time information when hovered. It could show if there's any correlation between the two types of deaths on a state-by-state basis over a given year. 
@@ -214,58 +176,10 @@ plot_ly(data = yearly_deaths_by_state, x = ~total_influenza_death, y = ~total_pn
          xaxis = list(title = 'Total Influenza Deaths'),
          yaxis = list(title = 'Total Pneumonia Deaths'))
 ```
-
-In general, it seems that there's no relatinoship between the two causes of deaths. Even though there's a slight upward trends in the scatterplot, it is actually misleading in a sense that the scale of the deaths for the two disease are different. In other words, if we scale them to the same the scatterplot is highly likely to be spreadout. On the other hand, there are a lot of outliers that are leading out our misinterpretation of the graph. When hovering over the points further away from either axes, we will notice that these points are mainly California, Texas and Florida in different years. That being said, it is critical and worthwhile to take a closer look at these two states and infer what might be the potential causes of these. It could be the size of the state population, the location within the state or even the history of the states which forms residents' habits. 
-
-## D3 proposal
-Input: State and year
-Output: interactively scattetplot to look at the relationship
-
-```{r}
-# Define a function to create the plot for a specific year
-create_scatter_plot <- function(data, input_year) {
-  # Filter the data for the specified state and year
-  filtered_data <- data %>%
-    filter(year == input_year) %>%
-    group_by(state) %>%
-    summarise(
-    influenza_death = sum(as.numeric(gsub(",", "", num_influenza_death)), na.rm = TRUE),
-    pneumonia_death = sum(as.numeric(gsub(",", "", num_pneumonia_death)), na.rm = TRUE),
-      .groups = 'drop'
-    )
-  
-  filtered_data$state <- as.factor(filtered_data$state)
-  
-  # Create the scatter plot
-  plot <- plot_ly(
-    data = filtered_data,
-    x = ~influenza_death,
-    y = ~pneumonia_death,
-    type = 'scatter',
-    mode = 'markers',
-    text = ~state,  # Use week numbers as text labels
-    hoverinfo = 'text',
-    marker = list(size = 10)
-  ) %>%
-    layout(
-      title = paste('Influenza vs. Pneumonia Deaths -', input_year),
-      xaxis = list(title = 'Number of Influenza Deaths'),
-      yaxis = list(title = 'Number of Pneumonia Deaths')
-    )
-  
-  return(plot)
-}
-
-# Example usage:
-# Assuming 'data1' is your dataset
-interactive_plot <- create_scatter_plot(data1, '2021-22')
-interactive_plot
-```
-
-* By changing year, we could look at the relationship specifically. 
+* In general, it seems that there's no relatinoship between the two causes of deaths. Even though there's a slight upward trends in the scatterplot, it is actually misleading in a sense that the scale of the deaths for the two disease are different. In other words, if we scale them to the same the scatterplot is highly likely to be spreadout. On the other hand, there are a lot of outliers that are leading out our misinterpretation of the graph. When hovering over the points further away from either axes, we will notice that these points are mainly California, Texas and Florida in different years. That being said, it is critical and worthwhile to take a closer look at these two states and infer what might be the potential causes of these. It could be the size of the state population, the location within the state or even the history of the states which forms residents' habits. 
 
 ## Do California, Texas and Florida Tend to Have High Casualties In Diseases?
-To verify our previous concerns on outliers which state has the highest number of deaths because of these three death causes across the year, we would like to use a heatmap to have a more straighforward idea on the frequency of death for across the years.
+To verify our previous concerns on outliers which state has the highest number of deaths because of these three death causes across the year, we would like to use a heatmap to have a more straightforward idea on the frequency of death for across the years.
 ```{r}
 # Convert the death count columns from character to numeric
 data1 <- data1 %>%
@@ -273,11 +187,23 @@ data1 <- data1 %>%
     total_pic = as.numeric(gsub(",", "", total_pic))
   )
 
+# Calculate total deaths for each state across all years
+state_total_deaths <- data1 %>%
+  group_by(state) %>%
+  summarise(total_pic_deaths = sum(total_pic, na.rm = TRUE)) %>%
+  ungroup()
+
 # Aggregate the data by state and year
 state_yearly_deaths <- data1 %>%
   group_by(state, year) %>%
   summarise(total_pic = sum(total_pic, na.rm = TRUE)) %>%
   ungroup()
+
+# Join this information with the state_yearly_deaths and reorder the state factor
+state_yearly_deaths <- state_yearly_deaths %>%
+  left_join(state_total_deaths, by = "state") %>%
+  mutate(state = reorder(state, total_pic_deaths)) %>%
+  select(-total_pic_deaths)
 
 # Reshape the data for the heatmap
 heatmap_data <- reshape2::melt(state_yearly_deaths, id.vars = c("state", "year"))
@@ -291,19 +217,18 @@ ggplot(heatmap_data, aes(x = year, y = state, fill = value)) +
        y = "State",
        fill = "Total Deaths") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),  # Angle the x-axis text for better readability
+  theme(axis.text.x = element_text(hjust = 1),  # Angle the x-axis text for better readability
         axis.text.y = element_text(size = 7))  # Adjust the size of the y-axis text if needed
 ```
-
-Overall Texas, California, Florida are three states with highest number of deaths across years, especially in 2020-2021 Texas and California have the brighter red which implies more total deaths. This result and conclusion confirm our suspect that these three states are outliers in some sense and meanwhile explain why they are further away from the axes in the previous graph. 
-
-* whether we can use Texas and California to do the mosaic plot
+* Overall Texas, California, Florida are three states with highest number of deaths across years, especially in 2020-2021 Texas and California have the brighter red which implies more total deaths. This result and conclusion confirm our suspect that these three states are outliers in some sense and meanwhile explain why they are further away from the axes in the previous graph. 
 
 ## How About Other Diseases Transmitted Through Other Methods Than Respiratory Systems?
 To check that if disease transmission methods would be a factor influencing the their total deaths, we used a parellel coordinate plot, where each line is a date; each axis is one of the 10 diseases causes, to see what are the top several ones.
 ```{r}
+# Read data
 data2 <- read.csv("data/data2.csv")
 
+# Select necessary columns and rename them
 data2 <- data2 %>%
   select(occurrence = Jurisdiction.of.Occurrence,
          year = MMWR.Year,
@@ -355,7 +280,6 @@ fig <- plot_ly(type = 'parcoords',
 fig
 ```
 
-
 ## Facet scatterplot: look at the relationships between any 2 diseases. 10*10
 Idea: Scatterplot matrix
 ```{r}
@@ -388,6 +312,7 @@ plot <- plot +
 plot
 ```
 
+## Data3 combining
 
 
 ```{r}
