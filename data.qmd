@@ -24,6 +24,7 @@ library(dplyr)
 library(reshape2)
 library(gridExtra)
 library(stringr)
+library(tidyverse)
 ```
 Since all data sets are collected weekly, it is intuitive to merge the data across different sources and then group them by states or by weeks in general sense. We may clean and process data by keeping variables indicating weeks, states, ages, and deaths of influenza or/and pneumonia to demonstrate what are the changes before and after the COVID-19 outbreak. Depending on the graphs' needs and availability of data, we could potentially extend the range of data from comparing year 2019 with year 2022 to a wider range of year such as from year 2018 to 2019 and with those from 2021 to 2023. With larger pool of the data points, it is more likely to show the effects of COVID-19 on the casualties of diseases of interest. A brief show of dataset 1 without any merging is as follows:  
 ```{r}
@@ -81,8 +82,8 @@ ggplot(long_format, aes(x = variable, y = SUB.AREA, fill = value)) +
   labs(x = "Variable", y = "Sub-Area", fill = "Proportion Missing") +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 90, hjust = 1, size = 10),
-    axis.text.y = element_text(size = 8))
+    axis.text.x = element_text(angle = 90, hjust = 1, size = 8),
+    axis.text.y = element_text(size = 4))
 ```
 
 In dataset 2, a lot of diseases have null values different states such as Alaska, Arkansas, Colorado, Connecticut, Delaware, District of Columbia, Hawaii, Idaho, Indiana, Iowa, Kansas, Louisiana, Maine, Maryland, Minnesota, most of which are missing in influenza and pneumonia, and abnormal clinical findings. Since the column name is relatively long in this file, we use column index while ploting instead. 
@@ -99,19 +100,25 @@ count_missing <- function(x) {
 # Apply this function to every column in the dataframe
 missing_counts <- sapply(data2, count_missing)
 
-# Change column name to its corresponding index
-# Creating a data frame for ggplot
-variable_indices <- 1:length(missing_counts)
-missing_data_df1 <- data.frame(
-  Variable = variable_indices,
-  MissingValues = missing_counts
+# Convert missing_counts to a dataframe
+missing_data_df <- data.frame(
+  Index = seq_along(missing_counts), # Create an index column
+  Variable = names(missing_counts),
+  Missing = missing_counts,
+  NonMissing = nrow(data2) - missing_counts
 )
 
-# Plotting the bar chart
-ggplot(missing_data_df1, aes(x = Variable, y = MissingValues)) +
+# Melt the dataframe for ggplot2
+missing_data_long <- missing_data_df %>%
+  pivot_longer(cols = c(Missing, NonMissing), names_to = "Status", values_to = "Count")
+
+# Plot the stacked bar chart using the index for the x-axis
+ggplot(missing_data_long, aes(x = Index, y = Count, fill = Status)) +
   geom_bar(stat = "identity") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(x = "Variable Index", y = "Number of Missing Values", title = "Missing Data by Columns for Data2 File")
+  theme_minimal() +
+  theme(axis.text.x = element_text(hjust = 1)) +
+  labs(x = "Variable Index", y = "Count", fill = "Data Status") +
+  ggtitle("Missing vs Non-Missing Data Counts per Variable Index")
 ```
 
 In dataset 3, it seems that Guam in "Weekly Cumulative Influenza Vaccination Coverage for Children" tends to have missing values for a few estimation variables such as point estimate, and confidence intervals while the data belongs to "Up-to-date" indicator label in "Weekly Cumulative Influenza Vaccination Coverage for Adults" are highly likely to appear missing.  
@@ -151,6 +158,39 @@ ggplot(missing_data_df3y, aes(x = Variable, y = MissingValues)) +
   geom_bar(stat = "identity") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   labs(x = "Column Name", y = "Number of Missing Values", title = "Missing Data by Columns for Data3_Youth File")
+```
+
+In dataset 4, which originates from the same data source as dataset 1, there is a distinct difference in scope. While dataset 1 contains data at the state level, dataset 4 expands its coverage to encompass national-level data.
+```{r}
+# Read data
+data4 <- read.csv("data/data4.csv")
+
+# Prepare the data by creating a binary matrix where 1 indicates a missing value and 0 indicates a present value
+data4_missing <- data4 %>%
+  mutate(across(everything(), ~ ifelse(is.na(.), 1, 0)))  # Convert NAs to 1
+
+# Add a row number column to represent each row in the original dataset
+data4_missing$row_id <- seq_len(nrow(data4_missing))
+
+# Convert this dataframe to a long format for plotting
+data4_long <- data4_missing %>%
+  pivot_longer(cols = -row_id, names_to = "variable", values_to = "is_missing") %>%
+  mutate(is_missing = factor(is_missing, labels = c("Present", "Missing")))  # Convert to factor for coloring
+
+# Create the heatmap
+ggplot(data4_long, aes(x = variable, y = row_id, fill = is_missing)) +
+  geom_tile() +
+  scale_fill_manual(values = c("Present" = "grey", "Missing" = "black")) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 1, hjust=1),
+    axis.text.y = element_blank(),  
+    axis.ticks.y = element_blank(), 
+    legend.position = "none"
+  ) +
+  labs(x = "Variable", y = "Row") +
+  ggtitle("Heatmap of Missing Values in Data4")
+
 ```
 
 Ideally, we would want to fill in the missing data by choosing the mean or median of the columns to replace the potential risk of removing all the N/A from the dataframe. However, in practice it is very risky to just directly to replace the emptiness with the mean or the median as we cannont conclude that mean or median would serve as good estimators for those missing values. Hence it would be more practical to go with a more conservative method rather than blindly use unverified estimators.
