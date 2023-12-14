@@ -137,6 +137,6 @@
     "href": "results.html#data3-combining",
     "title": "3  Results",
     "section": "3.8 Data3 combining",
-    "text": "3.8 Data3 combining\n\n\nCode\ndata3 &lt;- read.csv(\"data/data3_adult.csv\")\n\ndata3$Month_Week &lt;- sub(\" .*\", \"\", data3$Month_Week)\n\ndata3_youth &lt;- read.csv(\"data/data3_youth.csv\")\n\ndata3_youth$Month_Week &lt;- sub(\" .*\", \"\", data3_youth$Month_Week)"
+    "text": "3.8 Data3 combining\n\n\nCode\n# Read data\ndata3_adult &lt;- read.csv(\"data/data3_adult.csv\")\n\n# Change format \"Month_Week\" column (only extract the month)\ndata3_adult$Month_Week &lt;- sub(\" .*\", \"\", data3_adult$Month_Week)\n\n\n\n\nCode\n# Read data\ndata3_youth &lt;- read.csv(\"data/data3_youth.csv\")\n\n# Change format \"Month_Week\" column (only extract the month)\ndata3_youth$Month_Week &lt;- sub(\" .*\", \"\", data3_youth$Month_Week)"
   }
 ]

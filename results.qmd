@@ -314,14 +314,20 @@ plot
 
 ## Data3 combining
 
+```{r}
+# Read data
+data3_adult <- read.csv("data/data3_adult.csv")
+
+# Change format "Month_Week" column (only extract the month)
+data3_adult$Month_Week <- sub(" .*", "", data3_adult$Month_Week)
+
+```
 
 ```{r}
-data3 <- read.csv("data/data3_adult.csv")
-
-data3$Month_Week <- sub(" .*", "", data3$Month_Week)
-
+# Read data
 data3_youth <- read.csv("data/data3_youth.csv")
 
+# Change format "Month_Week" column (only extract the month)
 data3_youth$Month_Week <- sub(" .*", "", data3_youth$Month_Week)
 ```
 
