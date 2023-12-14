@@ -39,8 +39,78 @@ yearly_deaths_by_state <- data1_processed %>%
   )
 
 # Save the processed data to a new CSV file
-write.csv(data1_processed, "data/yearly_deaths_by_state.csv", row.names = FALSE)
+write.csv(yearly_deaths_by_state, "data/yearly_deaths_by_state.csv", row.names = FALSE)
 ```
 
 
+```{html}
+<div>
+  <label for="yearSelector">Select Year:</label>
+  <select id="yearSelector"></select>
+</div>
+<div id="scatterplot" style="width: 600px; height: 400px;"></div>
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script>
+// Load the preprocessed data from the CSV file
+d3.csv("https://raw.githubusercontent.com/cu-msds-edav-project/Disease-Casualties-Changes/main/data/yearly_deaths_by_state.csv")
+  .then(function(data) {
+
+    // Populate year selector
+    var years = Array.from(new Set(data.map(d => d.year)));
+    var selector = d3.select("#yearSelector");
+    selector.selectAll("option")
+      .data(years)
+      .enter()
+      .append("option")
+      .text(d => d)
+      .attr("value", d => d);
+
+    // Function to create the scatter plot
+    function createScatterPlot(selectedYear) {
+      // Filter data for the selected year and group by state
+      var filteredData = data.filter(d => d.year === selectedYear);
+
+      // Define scales
+      var xScale = d3.scaleLinear()
+        .domain(d3.extent(filteredData, d => +d.total_influenza_death))
+        .range([40, 560]);
+
+      var yScale = d3.scaleLinear()
+        .domain(d3.extent(filteredData, d => +d.total_pneumonia_death))
+        .range([360, 40]);
+
+      // Select the SVG element, if it exists
+      var svg = d3.select("#scatterplot").selectAll("svg").data([null]);
+      svg = svg.enter().append("svg").merge(svg)
+        .attr("width", 600)
+        .attr("height", 400);
+
+      // Bind filtered data to circles
+      var circles = svg.selectAll("circle")
+        .data(filteredData, d => d.state);
+
+      // Update the scatter plot
+      circles.enter().append("circle").merge(circles)
+        .attr("cx", d => xScale(+d.total_influenza_death))
+        .attr("cy", d => yScale(+d.total_pneumonia_death))
+        .attr("r", 5)
+        .attr("fill", "steelblue");
+
+      // Remove old data points
+      circles.exit().remove();
+    }
+
+    // Initialize the scatter plot
+    createScatterPlot(years[0]);
+
+    // Update the plot when a new year is selected
+    selector.on("change", function(event) {
+      createScatterPlot(event.target.value);
+    });
+  })
+  .catch(function(error) {
+    console.error('Error loading the CSV file:', error);
+  });
+</script>
+```
 
