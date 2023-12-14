@@ -6,8 +6,26 @@
   }
 </style> 
 
+## Div plot
+
+<button onclick="update(data1)">Dataset 1</button>
+<button onclick="update(data2)">Dataset 2</button>
 <div id="plot">
+<!-- <svg id="withaxes" width="600" height="400"> </svg> -->
 </div>
+
+<p></p>
+<!-- <button type="button" onclick="add()">Add bar</button> -->
+<!-- <button type="button" onclick="remove()">Remove bar</button> -->
+
+The idea and mechanism of the interactivity plot comes from https://d3-graph-gallery.com/graph/line_change_data.html with combination of https://jtr13.github.io/d3book/line-charts.html.
+
+
+## Div plot1
+<input type="radio" name="data" value="data1" checked="true">data1
+<input type="radio" name="data" value="data2">data2
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="scripts/myscript.js"></script>

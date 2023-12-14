@@ -138,7 +138,14 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#div-plot" id="toc-div-plot" class="nav-link active" data-scroll-target="#div-plot"><span class="header-section-number">4.1</span> Div plot</a></li>
+  <li><a href="#div-plot1" id="toc-div-plot1" class="nav-link" data-scroll-target="#div-plot1"><span class="header-section-number">4.2</span> Div plot1</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/CU-MSDS-EDAV-Project/Disease-Casualties-Changes/edit/main/d3graph.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/CU-MSDS-EDAV-Project/Disease-Casualties-Changes/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -165,13 +172,31 @@ ul.task-list li input[type="checkbox"] {
     font-family: sans-serif;
   }
 </style>
+<section id="div-plot" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="div-plot"><span class="header-section-number">4.1</span> Div plot</h2>
+<button onclick="update(data1)">
+Dataset 1
+</button>
+<button onclick="update(data2)">
+Dataset 2
+</button>
 <div id="plot">
-
+<!-- <svg id="withaxes" width="600" height="400"> </svg> -->
 </div>
+<p>
+</p>
+<!-- <button type="button" onclick="add()">Add bar</button> -->
+<!-- <button type="button" onclick="remove()">Remove bar</button> -->
+<p>The idea and mechanism of the interactivity plot comes from https://d3-graph-gallery.com/graph/line_change_data.html with combination of https://jtr13.github.io/d3book/line-charts.html.</p>
+</section>
+<section id="div-plot1" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="div-plot1"><span class="header-section-number">4.2</span> Div plot1</h2>
+<p><input type="radio" name="data" value="data1" checked="true">data1 <input type="radio" name="data" value="data2">data2</p>
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="scripts/myscript.js"></script>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -427,7 +452,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/CU-MSDS-EDAV-Project/Disease-Casualties-Changes/edit/main/d3graph.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/CU-MSDS-EDAV-Project/Disease-Casualties-Changes/issues/new" class="toc-action">Report an issue</a></p></div></div></div>
+    </div>
     <div class="nav-footer-right">This book was built with <a href="https://quarto.org/">Quarto</a>.</div>
   </div>
 </footer>

@@ -75,5 +75,26 @@
     "title": "3  Results",
     "section": "3.7 Facet scatterplot: look at the relationships between any 2 diseases. 10*10",
     "text": "3.7 Facet scatterplot: look at the relationships between any 2 diseases. 10*10\nIdea: Scatterplot matrix\n\n\nCode\nfiltered_data2 &lt;- data2 %&gt;%\n  filter(year == '2020', occurrence == 'United States')\n\n\n\n\nCode\nselected_data &lt;- filtered_data2 %&gt;%\n  select(septicemia, malignant_neoplasms, diabetes_mellitus, alzheimer, \n         influenza_pneumonia, combined_respiratory, nephritis, heart_diseases, \n         cerebrovascular, combined_covid19)\n\n# Create the scatter plot matrix\nplot &lt;- ggpairs(selected_data,\n        title = \"Scatter Plot Matrix for Disease Relationships\",\n        upper = list(continuous = wrap(\"cor\", size = 3)), # Correlation in upper panels with smaller text\n        lower = list(continuous = wrap(\"points\", size = 0.3, alpha = 0.5)), # Points in lower panels with alpha blending\n        diag = list(continuous = wrap(\"densityDiag\", size = 0.5))) # Diagonal density plots with smaller text)\n\n# Customize the plot to improve readability of labels\nplot &lt;- plot +\n  theme(\n    # Rotate the text for x and y axis labels to avoid overlap\n    axis.text.x = element_text(vjust = 1, hjust = 1, size = 3.5),\n    axis.text.y = element_text(vjust = 1, hjust = 1, size = 5),\n    axis.title.x = element_text(size = 5),\n    axis.title.y = element_text(size = 7),\n    strip.text = element_text(size = 5)\n  )\n\n# Render the plot\nplot"
+  },
+  {
+    "objectID": "d3graph.html",
+    "href": "d3graph.html",
+    "title": "4  Interactive graph",
+    "section": "",
+    "text": "Add bar\n\n\nRemove bar\n\nFahrenheit Celsius\n\n\n\n\n\n\n\nChange Color"
+  },
+  {
+    "objectID": "d3graph.html#div-plot1",
+    "href": "d3graph.html#div-plot1",
+    "title": "4  Interactive graph",
+    "section": "4.2 Div plot1",
+    "text": "4.2 Div plot1\ndata1 data2"
+  },
+  {
+    "objectID": "d3graph.html#div-plot",
+    "href": "d3graph.html#div-plot",
+    "title": "4  Interactive graph",
+    "section": "4.1 Div plot",
+    "text": "4.1 Div plot\n\nDataset 1\n\n\nDataset 2\n\n\n\n\n\n\n\n\nThe idea and mechanism of the interactivity plot comes from https://d3-graph-gallery.com/graph/line_change_data.html with combination of https://jtr13.github.io/d3book/line-charts.html."
   }
 ]
