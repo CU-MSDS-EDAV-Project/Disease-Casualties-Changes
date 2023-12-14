@@ -207,7 +207,7 @@ heatmap_data <- reshape2::melt(state_yearly_deaths, id.vars = c("state", "year")
 # Create the heatmap
 ggplot(heatmap_data, aes(x = year, y = state, fill = value)) +
   geom_tile() +  # Use geom_tile for heatmap squares
-  scale_fill_gradient(low = "white", high = "red") +  # Use a gradient from white to red for the fill
+  scale_fill_gradient(low = "white", high = "red") +
   labs(title = "Heatmap of Total Deaths by State and Year",
        x = "Year",
        y = "State",
@@ -269,7 +269,7 @@ fig <- plot_ly(type = 'parcoords',
                  list(label = 'COVID-19', values = new_data2$combined_covid19)
                )) %>% layout(
   title = "Parallel Coordinates Plot for Causes of Death",
-  font = list(size = 9)  # Adjust font size
+  font = list(size = 9)  
                )
 
 # Show the plot
@@ -289,9 +289,9 @@ selected_data <- filtered_data2 %>%
 # Create the scatter plot matrix
 plot <- ggpairs(selected_data,
         title = "Scatter Plot Matrix for Disease Relationships",
-        upper = list(continuous = wrap("cor", size = 3)), # Correlation in upper panels with smaller text
-        lower = list(continuous = wrap("points", size = 0.3, alpha = 0.5)), # Points in lower panels with alpha blending
-        diag = list(continuous = wrap("densityDiag", size = 0.5))) # Diagonal density plots with smaller text)
+        upper = list(continuous = wrap("cor", size = 3)), 
+        lower = list(continuous = wrap("points", size = 0.3, alpha = 0.5)), 
+        diag = list(continuous = wrap("densityDiag", size = 0.5)))
 
 # Customize the plot to improve readability of labels
 plot <- plot +
@@ -311,20 +311,24 @@ plot
 ## Data3 combining
 
 ```{r}
-# Read data
+# Read data3_adult
 data3_adult <- read.csv("data/data3_adult.csv")
 
 # Change format "Month_Week" column (only extract the month)
 data3_adult$Month_Week <- sub(" .*", "", data3_adult$Month_Week)
 
-```
-
-```{r}
-# Read data
+# Read data3_youth
 data3_youth <- read.csv("data/data3_youth.csv")
 
 # Change format "Month_Week" column (only extract the month)
 data3_youth$Month_Week <- sub(" .*", "", data3_youth$Month_Week)
+
 ```
+
+## Boxplot: trendency by year (adult+youth)
+
+## Spatial Data(one death one vaccination-state): answer which state recive most vaccination
+
+## Mosaic: age, 2 state
 
 
