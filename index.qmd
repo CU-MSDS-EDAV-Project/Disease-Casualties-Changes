@@ -1,10 +1,9 @@
 # Introduction
-Since the COVID-19 outbreak, many people have died due to the disease. In order to stay safe and healthy, people may have gradually changed their mindset and hygiene habits accordingly. Owing to this potential change, we are interested in finding if there are any changes to disease casualties and other plausible factors that might also cause the changes.  
+Since the COVID-19 outbreak, many people have died due to the disease. In order to survive and maintain healthy, people may have gradually changed their mindset and hygiene habits accordingly. Owing to this potential change, we are interested in finding if there are any changes to disease casualties and other plausible factors that might also cause the changes.  
 
-We first started researching diseases transmitted through similar manners, influenza and pneumonia. We would like to explore whether the emergence of COVID-19 affected the prevalence of casualties in influenza or/and pneumonia before and after the COVID-19 outbreak. Specifically, we are interested in the following aspects of the questions:  
+We first started researching diseases transmitted through similar manners i.e. influenza and pneumonia. We would like to explore whether the emergence of COVID-19 affected the prevalence of casualties in influenza or/and pneumonia before and after the COVID-19 outbreak. Specifically, we are interested in the following aspects of the questions:  
 - How is the change reflected nationally over the time frame from 2019 to 2021?  
-- How is the change reflected across different regions such as states? Does it have similar trends in all the states or are there any patterns in nearby states?  
-- How is the change reflected across different age groups (< 18, 18 ~ 64, 65 + years old)?  
+- How is the change reflected across different regions such as states? Does it have similar trends among states with the top casualties?  
 
 After focusing on influenza and pneumonia, we would like to know the current prevalence of other disease casualties as a whole and individually. For instance, how are the counts of the total deaths spread out in the following categories:      
 1. Natural cause  
@@ -17,4 +16,6 @@ After focusing on influenza and pneumonia, we would like to know the current pre
 8. Diseases of heart  
 9. Cerebrovascular diseases  
 
-With the exploration into various diseases' casualties, it is worthwhile to consider if national coverage of the vaccines affects disease casualties.  
+With the exploration into various diseases' casualties, it is worthwhile to consider if national coverage of the vaccines affects disease casualties. For example, do states with the lowest casualties have the higher or highest vaccination coverage as compared to other states?  
+
+While assorted types of static graph could literally offer us comprehensive understanding and overview of the our data, some simple dynamic graphs of interactions with readers still brings novel idea and impression on our data. 

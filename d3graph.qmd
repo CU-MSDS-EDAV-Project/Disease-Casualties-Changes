@@ -6,8 +6,21 @@
   }
 </style> 
 
+## Div plot
+
+<button onclick="update(data1)">Dataset 1</button>
+<button onclick="update(data2)">Dataset 2</button>
 <div id="plot">
+<!-- <svg id="withaxes" width="600" height="400"> </svg> -->
 </div>
+
+<p></p>
+<!-- <button type="button" onclick="add()">Add bar</button> -->
+<!-- <button type="button" onclick="remove()">Remove bar</button> -->
+
+The idea and mechanism of the interactivity plot comes from <a href=https://d3-graph-gallery.com/graph/line_change_data.html>d3 Graph Gallery</a>  with combination of <a href=https://jtr13.github.io/d3book/line-charts.html> course d3 website</a>.
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="scripts/myscript.js"></script>

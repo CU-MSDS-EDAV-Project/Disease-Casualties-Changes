@@ -1,6 +1,4 @@
 # Disease Casualties Changes Before and After COVID-19. 
-## Link to our project outline:  
-https://docs.google.com/document/d/10gtkQGecIkg3dcWTmo35RtJmRHxA2wh5mWMndOzf3KI/edit  
 ## Link to our data:  
 ## Data1:  
 https://gis.cdc.gov/grasp/fluview/Mortality.html
