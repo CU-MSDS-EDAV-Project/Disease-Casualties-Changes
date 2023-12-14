@@ -14,7 +14,6 @@ library(ggridges)
 
 ## How Do Diseases with Similar Transmission Methods Compare to COVID-19?
 During the outbreak, populace were educated and informed that COVID-19 is transmitted through our respiratory systems. We would like to start observing diseases that are also transmitted through our respiratory system, i.e. influenza and pneumonia, have similar or basically the same patterns as that of COVID-19.
-
 ```{r}
 # Data4 is national wise data
 # Read data
@@ -79,7 +78,6 @@ ggplot(long_data_line, aes(x = year, y = deaths, color = cause, group = cause)) 
 
 ## Is The Trend We Observed Above An Coincidence?
 To confirm our observation above, we need to dive further into the dataset individually for influenza and pneumonia year by year starting from 2016 till this year. We do so by generating a faceted plot on years, where x axis denotes week within the year; y axis denotes the number of deaths; the two lines representing the number of influenza deaths and pneumonia deaths
-
 ```{r}
 # Reshape the data to long format
 long_data_line2 <- data4 %>% 
@@ -110,7 +108,6 @@ ggplot(long_data_line2, aes(x = week_order, y = num_deaths, color = death_type, 
 
 ## How Are Casualties Distributed Across These Three Diseases?
 Knowing the trends individually gives us partial idea on the deaths of each disease. We cannot tell whether casualties of certain number is considered fortune or critical given the surroundings at the moment. Hence, it is more worthwhile to put them together and compare their relative proportion over the timeline. We achieve this objective through stacked bar charts where x axis is year; y axis is number of deaths and bar charts are stacked from three colors with each representing the death of COVID, influenza and pneumonia.
-
 ```{r}
 # Reshape the data to a long format for plotting
 long_data_stacked <- total_deaths %>%
@@ -134,7 +131,6 @@ ggplot(long_data_stacked, aes(x = year, y = deaths, fill = death_type)) +
 
 ## How Are Casualties Reflected in Each State?
 After exploring national trends for these three diseases, we would like to know more about the relationships between the different types of death counts and also the relationnship between death counts and year over state level. We created a ggplotly interactive plot where x-axis is num_influenza_death, y-axis is num_pneumonia_death and the time information when hovered. It could show if there's any correlation between the two types of deaths on a state-by-state basis over a given year. 
-
 ```{r}
 # Data1 is state wise data
 # Read data
