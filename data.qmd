@@ -160,4 +160,4 @@ ggplot(missing_data_df3y, aes(x = Variable, y = MissingValues)) +
   labs(x = "Column Name", y = "Number of Missing Values", title = "Missing Data by Columns for Data3_Youth File")
 ```
 
-
+Ideally, we would want to fill in the missing data by choosing the mean or median of the columns to replace the potential risk of removing all the N/A from the dataframe. However, in practice it is very risky to just directly to replace the emptiness with the mean or the median as we cannont conclude that mean or median would serve as good estimators for those missing values. Hence it would be more practical to go with a more conservative method rather than blindly use unverified estimators.

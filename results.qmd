@@ -11,6 +11,7 @@ library(GGally)
 library(ggridges)
 ```
 
+
 ## 
 Whether influenza and pneumonia have same patterns as Covid trend.
 
@@ -74,6 +75,7 @@ ggplot(long_data_line, aes(x = year, y = deaths, color = cause, group = cause)) 
   theme_minimal()
 
 ```
+
 
 
 
