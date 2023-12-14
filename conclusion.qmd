@@ -1,1 +1,12 @@
 # Conclusion
+Through our static and dynamic data analysis on diversified dataset resources, we found several exciting phenomena within the short period of 2019 to 2023, a balanced time gap before and after the COVID-19 outbreak. Starting from diseases of similar transmission methods, we found that not all of them follow the same pattern as Covid, nationally or individually, such as influenza. Interestingly, pneumonia matches our expectation that it not only follows the trends but also has a decreasing number of casualties compared to the pandemic. This somewhat confirms our claim that there are some underlying factors that cause people to change their mindset and habits, which as a result is reflected in the deaths of diseases. 
+
+In addition to a specific group of diseases, we extend our proposition to a broader range of diseases such as Septicemia, Magnant neoplasms and so on. We found a similar trend in all diseases when given a fixed date a higher casualty in one disease tends to have higher casualties in others except for “Malignant Neoplasm” and “Combined Covid” which shows a weak correlation between the two.
+
+## Limitation  
+Our exploration suffered from several limitations, including but not confined to missing data, insufficient data, and lack of normalization. As mentioned in the Data Section, a few of the data are missing in all three datasets. Some of them are due to the discrepancy of time collection while others may be caused by variations in data collection. Regardless of the plausible reasons, these are the challenges we encounter during the research. Ideally, we would like to fill in these data either by some estimators such as mean or median. However, due to the time interval the data were collected, it is more reasonable and practical to remove those missing values to avoid any potential misinterpretation given that we are relatively large amounts of datasets. Also, in our exploratory data analysis we mainly use the counts/frequency to compare across various states. However, it would make more sense to compare them after some kind of normalization, such as dividing the frequency by the state population to the density of the death occurrences.  
+
+## Future Direction
+In our upcoming goal, 
+
+## Lessons Learned
