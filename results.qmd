@@ -278,9 +278,10 @@ fig <- plot_ly(type = 'parcoords',
 # Show the plot
 fig
 ```
+* From the parallel coordinate plots, we can infer the relationships among these diverse diseases. Since each line represents the date for each disease, we can fix the window of filters to observe the number of deaths given certain dates for each cause. If we fix the window of the filter from the top of a disease and drag it down along the axes of that disease, we find out that in general diseases that have relatively high numbers of deaths tend to have similar trends in other diseases for the same date.
 
-## Facet scatterplot: look at the relationships between any 2 diseases. 10*10
-Idea: Scatterplot matrix
+## Facet scatterplot: Do Similar Trends Across Various Diseases Imply Pairwise Correlations?
+Previously we discovered that there are similar trends across diversified diseases. However, this is only our observation and needs to be verified with further details. We fulfilled this by facetting on the scatter plot of pairwise disease. 
 ```{r}
 filtered_data2 <- data2 %>%
   filter(year == '2020', occurrence == 'United States')
@@ -310,6 +311,7 @@ plot <- plot +
 # Render the plot
 plot
 ```
+* From the results above, most of the pairs show positive relationships between the two,  which matches our previous conclusion about the trends, except for a few with weak correlations or negatives. For example, the one between “Malignant Neoplasm” and “Combined Covid” shows a weak downward trend from left to right. This is consistent with our calculated value of -0.143 correlation in the upper right triangle. Although there are two other pair “Combined Covid” and “Influenza/pneumonia”, “Combined Covid” and “Combined Repiratory” both show negative values of correlation, by looking at the scatterplots we can tell that the correlations may be distorted due to some outstanding outliers in the graphs.
 
 ## Boxplot: trendency by year (adult+youth)
 
