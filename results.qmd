@@ -280,7 +280,7 @@ fig
 ```
 * From the parallel coordinate plots, we can infer the relationships among these diverse diseases. Since each line represents the date for each disease, we can fix the window of filters to observe the number of deaths given certain dates for each cause. If we fix the window of the filter from the top of a disease and drag it down along the axes of that disease, we find out that in general diseases that have relatively high numbers of deaths tend to have similar trends in other diseases for the same date.
 
-## Facet scatterplot: Do Similar Trends Across Various Diseases Imply Pairwise Correlations?
+## Do Similar Trends Across Various Diseases Imply Pairwise Correlations?
 Previously we discovered that there are similar trends across diversified diseases. However, this is only our observation and needs to be verified with further details. We fulfilled this by facetting on the scatter plot of pairwise disease. 
 ```{r}
 filtered_data2 <- data2 %>%
@@ -313,8 +313,8 @@ plot
 ```
 * From the results above, most of the pairs show positive relationships between the two,  which matches our previous conclusion about the trends, except for a few with weak correlations or negatives. For example, the one between “Malignant Neoplasm” and “Combined Covid” shows a weak downward trend from left to right. This is consistent with our calculated value of -0.143 correlation in the upper right triangle. Although there are two other pair “Combined Covid” and “Influenza/pneumonia”, “Combined Covid” and “Combined Repiratory” both show negative values of correlation, by looking at the scatterplots we can tell that the correlations may be distorted due to some outstanding outliers in the graphs.
 
-## Boxplot: trendency by year (adult+youth)
-
+## Are There Any Changes or Tendency Due to The Pandemic?
+Vaccines are crucial approaches to prevent and reduce the number of deaths for diseases. After knowing the trends for various diseases, we are interested in exploring the trends for vaccines as well either nationally or statewise.
 ```{r}
 # Read data3_adult
 data3_adult <- read.csv("data/data3_adult.csv")
@@ -420,9 +420,10 @@ ggplot(combined_data_summarized, aes(x = year, y = total, fill = combined_catego
   theme(axis.text.x = element_text(hjust = 0.5),
         legend.position = "bottom")
 ```
+* From the grouped bar charts, we found that there is an increase and then a decrease in the number of vaccinations nationally for youth at both national and state levels. On the other hand, there seems to be a consistent increase in the number of vaccinations for adults. However, in general it shows a weak decrease in the number of vaccinations.
 
-## Spatial Data(one death one vaccination-state): answer which state recive most vaccination
-
+## How is Vaccination Related to the Number of Deaths for Diseases?
+After exploring the diseases individually, we are interested in looking at the general picture geographically. Also, we would like to know if the claim that vaccination benefits the deaths of diseases is valid for our dataset. For simplicity, we take the year 2020 to 2021 as an example for our studies. We accumulated all deaths during the year for all the diseases and grouped them states and displayed the frequency according to the darkness of the color. Similarly, we displayed the number of vaccination by states. We would like to investigate how are them distributed by states. 
 ```{r}
 # Filter for the year 2021-2022 and sum vaccinations by state
 vaccination_data_2021_2022 <- combined_data3_state %>%
@@ -483,10 +484,10 @@ map1 <- state_choropleth(state_deaths_2020_2021,
 # Combine the two maps with map2 (deaths) on top
 combined_map <- grid.arrange(map1, map2, ncol = 1, heights = c(5,5))
 ```
+* By observation, we found that California, Texas, Florida and a few other states have the highest frequency of total disease death, which matches our previous finding. On the other hand, we noticed that California, Texas, Illinois and a few other states have the highest frequency of state vaccination. Before this graphical presentation, we might think that it is because of low vaccination coverage in states such as California, Texas that they ended up with a relatively high number of deaths. Meanwhile, the connection between the two graphs makes sense since people in states with higher numbers of casualties would tend to be more cautious after keeping track of the news and would certainly be more willing to take the vaccination.
 
-## Mosaic: age, 2 state
-Pick CA and TX
-
+## How Are Vaccinations Distributed in California and Texas in Different Years and Age Group
+Since California and Texas stand out quite distinctively, we would like to delve into the distribution and connection of vaccines by years and by age groups. 
 ```{r}
 # Filter for Texas and California and for the specific years
 aggregated_data <- combined_data3_state %>%
@@ -502,5 +503,6 @@ contingency_table <- xtabs(total_number ~ national_state + year + age_group, dat
 # Create the mosaic plot with horizontal year labels
 mosaic(contingency_table, main="Mosaic plot of Vaccine Data")
 ```
+* From the result, it is straightforward to conclude that in general youth tend to take the vaccination for both states. This is actually reasonable since there are a few mandatory vaccines for students at certain ages. However, we can see that the portion of adult taking vaccination increases from 2021 to 2022, which is after the pandemic outbreak. Hence, it seems like the outbreak of COVID-19 has some influences on our mindset and behaviors. People are more willing to take vaccines, which potentially decreases the disease casualties. Meanwhile, we also find that as the year goes on, the portion of vaccination increases irrespective of the age groups. This also confirms our suspect that people will become more aware of health and relevant instructions after Covid. 
 
 
