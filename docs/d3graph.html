@@ -244,7 +244,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <select id="yearSelector"></select>
 </div>
 <div id="scatterplot" style="width: 600px; height: 400px;"></div>
-<script src="https://d3js.org/d3.v6.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="scripts/myscript.js"></script>
 <script>
 // Load the preprocessed data from the CSV file
 d3.csv("https://raw.githubusercontent.com/cu-msds-edav-project/Disease-Casualties-Changes/main/data/yearly_deaths_by_state.csv")
@@ -343,9 +344,6 @@ d3.csv("https://raw.githubusercontent.com/cu-msds-edav-project/Disease-Casualtie
   });
   
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-<script src="scripts/myscript.js"></script>
 
 
 
