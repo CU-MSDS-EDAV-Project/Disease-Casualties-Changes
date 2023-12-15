@@ -130,7 +130,7 @@ ggplot(long_data_stacked, aes(x = year, y = deaths, fill = death_type)) +
        fill = "Cause of Death") +
   theme_minimal()
 ```
-* Based on the result above, it quite obvious that the number of deaths due to these three causes in year 2020-2021 is the highest, which is consistent with our previous conclusion on the general trends of the three disease since pneuomonia follows the same trends as COVID-19 while influenza stays relatively low the cumulative result of the three will end up with a huge peak at the year 2020 to 2021. On the other hand, if we take a look at the proportion of the deaths we can see that there's actually a drastic increase in proportion of deaths in COVID and decrease for pneumonia even though the total number of deaths in pneumonia still decreased. Specifically, the deaths of COVID even reached more than 50% of deaths among the three and then decreased after the outbreak. Interestingly, we notice that there seems to be some slight increase in the number of deaths in pneumonia last year from 2022 to 2023 as compared to pre-COVID period before 2020. However, it is still ambiguous at the moment to say if there are certain changes in deaths due to the outbreak of COVID since the pattern observed last year might still be the remain consequenes of COVID. It would be more accurate to make further inference if we have the data for 2023 to 2024 by hand and compare it to last year and the year before the outbreak. 
+* Based on the result above, it quite obvious that the number of deaths due to these three causes in year 2020-2021 is the highest, which is consistent with our previous conclusion of the general trends of the three diseases since pneumonia follows the same trends as COVID-19 while influenza stays relatively low the cumulative result of the three will end up with a huge peak at the year 2020 to 2021. On the other hand, if we take a look at the proportion of the deaths we can see that there's actually a drastic increase in proportion of deaths in COVID and decrease for pneumonia even though the total number of deaths in pneumonia still decreased. Specifically, the deaths of COVID even reached more than 50% of deaths among the three and then decreased after the outbreak. Interestingly, we notice that there seems to be some slight increase in the number of deaths in pneumonia last year from 2022 to 2023 as compared to pre-COVID period before 2020. However, it is still ambiguous at the moment to say if there are certain changes in deaths due to the outbreak of COVID since the pattern observed last year might still be the remain consequences of COVID. It would be more accurate to make further inference if we have the data for 2023 to 2024 by hand and compare it to last year and the year before the outbreak. 
 
 ## How Are Casualties Reflected in Each State?
 After exploring national trends for these three diseases, we would like to know more about the relationships between the different types of death counts and also the relationnship between death counts and year over state level. We created a ggplotly interactive plot where x-axis is num_influenza_death, y-axis is num_pneumonia_death and the time information when hovered. It could show if there's any correlation between the two types of deaths on a state-by-state basis over a given year. 
@@ -175,7 +175,7 @@ plot_ly(data = yearly_deaths_by_state, x = ~total_influenza_death, y = ~total_pn
          xaxis = list(title = 'Total Influenza Deaths'),
          yaxis = list(title = 'Total Pneumonia Deaths'))
 ```
-* In general, it seems that there's no relatinoship between the two causes of deaths. Even though there's a slight upward trends in the scatterplot, it is actually misleading in a sense that the scale of the deaths for the two disease are different. In other words, if we scale them to the same the scatterplot is highly likely to be spreadout. On the other hand, there are a lot of outliers that are leading out our misinterpretation of the graph. When hovering over the points further away from either axes, we will notice that these points are mainly California, Texas and Florida in different years. That being said, it is critical and worthwhile to take a closer look at these two states and infer what might be the potential causes of these. It could be the size of the state population, the location within the state or even the history of the states which forms residents' habits. 
+* In general, it seems that there's no relationship between the two causes of deaths. Even though there's a slight upward trends in the scatterplot, it is actually misleading in a sense that the scale of the deaths for the two disease are different. In other words, if we scale them to the same the scatterplot is highly likely to be spread out. On the other hand, there are a lot of outliers that are leading out our misinterpretation of the graph. When hovering over the points further away from either axes, we will notice that these points are mainly California, Texas and Florida in different years. That being said, it is critical and worthwhile to take a closer look at these two states and infer what might be the potential causes of these. It could be the size of the state population, the location within the state or even the history of the states which forms residents' habits. 
 
 ## Do California, Texas and Florida Tend to Have High Casualties In Diseases?
 To verify our previous concerns on outliers which state has the highest number of deaths because of these three death causes across the year, we would like to use a heatmap to have a more straightforward idea on the frequency of death for across the years.
@@ -219,10 +219,10 @@ ggplot(heatmap_data, aes(x = year, y = state, fill = value)) +
   theme(axis.text.x = element_text(hjust = 1),  
         axis.text.y = element_text(size = 7)) 
 ```
-* Overall Texas, California, Florida are three states with highest number of deaths across years, especially in 2020-2021 Texas and California have the brighter red which implies more total deaths. This result and conclusion confirm our suspect that these three states are outliers in some sense and meanwhile explain why they are further away from the axes in the previous graph. 
+* Overall Texas, California, Florida are three states with highest number of deaths across years, especially in 2020-2021 Texas and California have the brighter red which implies more total deaths. This result and conclusion confirm our suspicion that these three states are outliers in some sense and meanwhile explain why they are further away from the axes in the previous graph. 
 
 ## How About Other Diseases Transmitted Through Other Methods Than Respiratory Systems?
-To check that if disease transmission methods would be a factor influencing the their total deaths, we used a parellel coordinate plot, where each line is a date; each axis is one of the 10 diseases causes, to see what are the top several ones.
+To check that if disease transmission methods would be a factor influencing the their total deaths, we used a parallel coordinate plot, where each line is a date; each axis is one of the 10 diseases causes, to see what are the top several ones.
 ```{r}
 # Read data
 data2 <- read.csv("data/data2.csv")
@@ -281,7 +281,7 @@ fig
 * From the parallel coordinate plots, we can infer the relationships among these diverse diseases. Since each line represents the date for each disease, we can fix the window of filters to observe the number of deaths given certain dates for each cause. If we fix the window of the filter from the top of a disease and drag it down along the axes of that disease, we find out that in general diseases that have relatively high numbers of deaths tend to have similar trends in other diseases for the same date.
 
 ## Do Similar Trends Across Various Diseases Imply Pairwise Correlations?
-Previously we discovered that there are similar trends across diversified diseases. However, this is only our observation and needs to be verified with further details. We fulfilled this by facetting on the scatter plot of pairwise disease. 
+Previously we discovered that there are similar trends across diversified diseases. However, this is only our observation and needs to be verified with further details. We fulfilled this by faceting on the scatter plot of pairwise disease. 
 ```{r}
 filtered_data2 <- data2 %>%
   filter(year == '2020', occurrence == 'United States')
@@ -314,7 +314,7 @@ plot
 * From the results above, most of the pairs show positive relationships between the two,  which matches our previous conclusion about the trends, except for a few with weak correlations or negatives. For example, the one between “Malignant Neoplasm” and “Combined Covid” shows a weak downward trend from left to right. This is consistent with our calculated value of -0.143 correlation in the upper right triangle. Although there are two other pair “Combined Covid” and “Influenza/pneumonia”, “Combined Covid” and “Combined Repiratory” both show negative values of correlation, by looking at the scatterplots we can tell that the correlations may be distorted due to some outstanding outliers in the graphs.
 
 ## Are There Any Changes or Tendency Due to The Pandemic?
-Vaccines are crucial approaches to prevent and reduce the number of deaths for diseases. After knowing the trends for various diseases, we are interested in exploring the trends for vaccines as well either nationally or statewise.
+Vaccines are crucial approaches to prevent and reduce the number of deaths for diseases. After knowing the trends for various diseases, we are interested in exploring the trends for vaccines as well either nationally or statewide.
 ```{r}
 # Read data3_adult
 data3_adult <- read.csv("data/data3_adult.csv")
@@ -423,7 +423,7 @@ ggplot(combined_data_summarized, aes(x = year, y = total, fill = combined_catego
 * From the grouped bar charts, we found that there is an increase and then a decrease in the number of vaccinations nationally for youth at both national and state levels. On the other hand, there seems to be a consistent increase in the number of vaccinations for adults. However, in general it shows a weak decrease in the number of vaccinations.
 
 ## How is Vaccination Related to the Number of Deaths for Diseases?
-After exploring the diseases individually, we are interested in looking at the general picture geographically. Also, we would like to know if the claim that vaccination benefits the deaths of diseases is valid for our dataset. For simplicity, we take the year 2020 to 2021 as an example for our studies. We accumulated all deaths during the year for all the diseases and grouped them states and displayed the frequency according to the darkness of the color. Similarly, we displayed the number of vaccination by states. We would like to investigate how are them distributed by states. 
+After exploring the diseases individually, we are interested in looking at the general picture geographically. Also, we would like to know if the claim that vaccination benefits the deaths of diseases is valid for our dataset. For simplicity, we take the year 2020 to 2021 as an example for our studies. We accumulated all deaths during the year for all the diseases and grouped them states and displayed the frequency according to the darkness of the color. Similarly, we displayed the number of vaccinations by states. We would like to investigate how they are distributed by states. 
 ```{r}
 # Filter for the year 2021-2022 and sum vaccinations by state
 vaccination_data_2021_2022 <- combined_data3_state %>%
@@ -441,8 +441,7 @@ vaccination_data_2021_2022 <- vaccination_data_2021_2022 %>%
 map2 <- state_choropleth(vaccination_data_2021_2022, 
                  title = "2021-2022 State Vaccination", 
                  legend = "Total Vaccinations")
-```
-```{r}
+
 # Data1 is state wise data
 # Read data
 data1 <- read.csv("data/data1.csv")
@@ -478,9 +477,7 @@ state_deaths_2020_2021 <- state_deaths_2020_2021 %>%
 map1 <- state_choropleth(state_deaths_2020_2021,
                  title = "2020-2021 Total Deaths by State",
                  legend = "Total Deaths")
-```
 
-```{r}
 # Combine the two maps with map2 (deaths) on top
 combined_map <- grid.arrange(map1, map2, ncol = 1, heights = c(5,5))
 ```
