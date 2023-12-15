@@ -1,5 +1,6 @@
 # Interactive graph
 
+
 ```{r}
 library(dplyr)
 
@@ -41,6 +42,8 @@ yearly_deaths_by_state <- data1_processed %>%
 # Save the processed data to a new CSV file
 write.csv(yearly_deaths_by_state, "data/yearly_deaths_by_state.csv", row.names = FALSE)
 ```
+
+In our interactive graph section, we present data for eight distinct years. You can investigate the correlation between pneumonia and influenza fatalities by selecting a year of interest. Each point on the graph represents the aggregated death count for a particular state over the months of the chosen year. This visual representation allows for an immediate and clear understanding of the death toll relationship between these two illnesses on a state-by-state basis.
 
 ```{=html}
 <div>
