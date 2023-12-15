@@ -1,94 +1,97 @@
 // add your JavaScript/D3 to this file
 
+// Load the preprocessed data from the CSV file
+d3.csv("https://raw.githubusercontent.com/cu-msds-edav-project/Disease-Casualties-Changes/main/data/yearly_deaths_by_state.csv")
+  .then(function(data) {
+    // Populate year selector
+    var years = Array.from(new Set(data.map(d => d.year)));
+    var selector = d3.select("#yearSelector");
+    selector.selectAll("option")
+      .data(years)
+      .enter()
+      .append("option")
+      .text(d => d)
+      .attr("value", d => d);
 
-// Create 2 datasets
-var data1 = [
-   {ser1: 0.3, ser2: 4},
-   {ser1: 2, ser2: 16},
-   {ser1: 3, ser2: 8}
-];
+    // Define margins and dimensions
+    var margin = {top: 10, right: 20, bottom: 40, left: 60},
+        width = 500 - margin.left - margin.right,
+        height = 360 - margin.top - margin.bottom;
 
-var data2 = [
-   {ser1: 1, ser2: 7},
-   {ser1: 4, ser2: 1},
-   {ser1: 6, ser2: 8}
-];
+    // Append the SVG object to the body of the page
+    var svg = d3.select("#scatterplot")
+      .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
 
-const data3 =
-[{"date":"1-Apr-18","high":60},
-{"date":"2-Apr-18","high":43},
-{"date":"3-Apr-18","high":43},
-{"date":"4-Apr-18","high":56},
-{"date":"5-Apr-18","high":45},
-{"date":"6-Apr-18","high":62},
-{"date":"7-Apr-18","high":49}];
-/*
-data.forEach(function(d) {
-      d.date = parseTime(d.date);
-});*/
+    // Function to create the scatter plot
+    function createScatterPlot(selectedYear) {
+      // Filter data for the selected year
+      var filteredData = data.filter(d => d.year === selectedYear);
 
-// set the dimensions and margins of the graph
-const margin = {top: 20, right: 50, bottom: 30, left: 50}
-    width = 700 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+      // Define scales
+      var xScale = d3.scaleLinear()
+        .domain(d3.extent(filteredData, d => +d.total_influenza_death))
+        .range([0, width]);
 
-// append the svg object to the body of the page
-var svg = d3.select("div#plot")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
+      var yScale = d3.scaleLinear()
+        .domain(d3.extent(filteredData, d => +d.total_pneumonia_death))
+        .range([height, 0]);
 
-// Initialise a X axis:
-var x = d3.scaleLinear().range([0,width]);
-var xAxis = d3.axisBottom().scale(x);
-svg.append("g")
-  .attr("transform", "translate(0," + height + ")")
-  .attr("class","myXaxis")
+      // Add X axis
+      svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(xScale));
 
-// Initialize an Y axis
-var y = d3.scaleLinear().range([height, 0]);
-var yAxis = d3.axisLeft().scale(y);
-svg.append("g")
-  .attr("class","myYaxis")
+      // Add Y axis
+      svg.append("g")
+        .call(d3.axisLeft(yScale));
 
-// Create a function that takes a dataset as input and update the plot:
-function update(data) {
+      // Add X axis label
+      svg.append("text")
+        .attr("text-anchor", "end")
+        .attr("x", width-100)
+        .attr("y", height + margin.bottom)
+        .text("Number of Influenza Deaths");
 
-  // Create the X axis:
-  x.domain([0, d3.max(data, function(d) { return d.ser1 }) ]);
-  svg.selectAll(".myXaxis").transition()
-    .duration(3000)
-    .call(xAxis);
+      // Add Y axis label
+      svg.append("text")
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -45)
+        .attr("x", -height / 2 + 125)
+        .text("Number of Pneumonia Deaths");
 
-  // create the Y axis
-  y.domain([0, d3.max(data, function(d) { return d.ser2  }) ]);
-  svg.selectAll(".myYaxis")
-    .transition()
-    .duration(3000)
-    .call(yAxis);
+      // Bind filtered data to circles
+      var circles = svg.selectAll("circle")
+        .data(filteredData, d => d.state);
 
-  // Create a update selection: bind to the new data
-  var u = svg.selectAll(".lineTest")
-    .data([data], function(d){ return d.ser1 });
+      // Update the scatter plot
+      circles.enter().append("circle").merge(circles)
+        .attr("cx", d => xScale(+d.total_influenza_death))
+        .attr("cy", d => yScale(+d.total_pneumonia_death))
+        .attr("r", 5)
+        .attr("fill", "steelblue");
 
-  // Updata the line
-  u
-    .enter()
-    .append("path")
-    .attr("class","lineTest")
-    .merge(u)
-    .transition()
-    .duration(3000)
-    .attr("d", d3.line()
-      .x(function(d) { return x(d.ser1); })
-      .y(function(d) { return y(d.ser2); }))
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 2.5)
-}
+      // Remove old data points
+      circles.exit().remove();
+    }
 
-// At the beginning, I run the update function on the first dataset:
-update(data1)
+    // Initialize the scatter plot
+    createScatterPlot(years[0]);
+
+    // Update the plot when a new year is selected
+    selector.on("change", function(event) {
+      // Clear the existing plot
+      svg.selectAll("g").remove();
+
+      // Draw the new plot for the selected year
+      createScatterPlot(this.value);
+    });
+  })
+  .catch(function(error) {
+    console.error('Error loading the CSV file:', error);
+  });

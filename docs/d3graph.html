@@ -20,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -194,156 +160,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Read data</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/data1.csv"</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Change column names and remove unnecessary columns</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>data1_processed <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">state =</span> SUB.AREA,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> SEASON,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">week =</span> WEEK,</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_influenza_death =</span> NUM.INFLUENZA.DEATHS,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_pneumonia_death =</span> NUM.PNEUMONIA.DEATHS,</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_covid_death =</span> NUM.COVID.<span class="fl">19.</span>DEATHS,</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_pic =</span> TOTAL.PIC,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_deaths =</span> TOTAL.DEATHS</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>AREA, <span class="sc">-</span>AGE.GROUP, <span class="sc">-</span>PERCENT.I, <span class="sc">-</span>PERCENT.P.I, <span class="sc">-</span>PERCENT.PIC, <span class="sc">-</span>PERCENT.COMPLETE)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>data1_processed <span class="ot">&lt;-</span> data1_processed <span class="sc">%&gt;%</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_influenza_death =</span> <span class="fu">gsub</span>(<span class="st">","</span>, <span class="st">""</span>, num_influenza_death),</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_pneumonia_death =</span> <span class="fu">gsub</span>(<span class="st">","</span>, <span class="st">""</span>, num_pneumonia_death)</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>yearly_deaths_by_state <span class="ot">&lt;-</span> data1_processed <span class="sc">%&gt;%</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_influenza_death =</span> <span class="fu">as.numeric</span>(num_influenza_death),</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_pneumonia_death =</span> <span class="fu">as.numeric</span>(num_pneumonia_death)</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state, year) <span class="sc">%&gt;%</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_influenza_death =</span> <span class="fu">sum</span>(num_influenza_death, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_pneumonia_death =</span> <span class="fu">sum</span>(num_pneumonia_death, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">'drop'</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the processed data to a new CSV file</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(yearly_deaths_by_state, <span class="st">"data/yearly_deaths_by_state.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<p>In our interactive graph section, we present data for eight distinct years. You can investigate the correlation between pneumonia and influenza fatalities by selecting a year of interest. Each point on the graph represents the aggregated death count for a particular state over the months of the chosen year. This visual representation allows for an immediate and clear understanding of the death toll relationship between these two illnesses on a state-by-state basis.</p>
+<style>
+  *   {
+    font-family: sans-serif
+  }
+</style>
 <div>
-  <label for="yearSelector">Select Year:</label>
-  <select id="yearSelector"></select>
+<p><label for="yearSelector">Select Year:</label> <select id="yearSelector"></select></p>
 </div>
-<div id="scatterplot" style="width: 600px; height: 400px;"></div>
+<div id="scatterplot" style="width: 600px; height: 400px;">
+
+</div>
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="scripts/myscript.js"></script>
-<script>
-// Load the preprocessed data from the CSV file
-d3.csv("https://raw.githubusercontent.com/cu-msds-edav-project/Disease-Casualties-Changes/main/data/yearly_deaths_by_state.csv")
-  .then(function(data) {
-    // Populate year selector
-    var years = Array.from(new Set(data.map(d => d.year)));
-    var selector = d3.select("#yearSelector");
-    selector.selectAll("option")
-      .data(years)
-      .enter()
-      .append("option")
-      .text(d => d)
-      .attr("value", d => d);
-      
-    // Define margins and dimensions
-    var margin = {top: 10, right: 20, bottom: 40, left: 60},
-        width = 500 - margin.left - margin.right,
-        height = 360 - margin.top - margin.bottom;
-        
-    // Append the SVG object to the body of the page
-    var svg = d3.select("#scatterplot")
-      .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform",
-              "translate(" + margin.left + "," + margin.top + ")");
-
-    // Function to create the scatter plot
-    function createScatterPlot(selectedYear) {
-      // Filter data for the selected year
-      var filteredData = data.filter(d => d.year === selectedYear);
-
-      // Define scales
-      var xScale = d3.scaleLinear()
-        .domain(d3.extent(filteredData, d => +d.total_influenza_death))
-        .range([0, width]);
-
-      var yScale = d3.scaleLinear()
-        .domain(d3.extent(filteredData, d => +d.total_pneumonia_death))
-        .range([height, 0]);
-        
-      // Add X axis
-      svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(xScale));
-
-      // Add Y axis
-      svg.append("g")
-        .call(d3.axisLeft(yScale));
-        
-      // Add X axis label
-      svg.append("text")
-        .attr("text-anchor", "end")
-        .attr("x", width-100)
-        .attr("y", height + margin.bottom)
-        .text("Number of Influenza Deaths");
-
-      // Add Y axis label
-      svg.append("text")
-        .attr("text-anchor", "end")
-        .attr("transform", "rotate(-90)")
-        .attr("y", -45)
-        .attr("x", -height / 2 + 125)
-        .text("Number of Pneumonia Deaths");
-
-      // Bind filtered data to circles
-      var circles = svg.selectAll("circle")
-        .data(filteredData, d => d.state);
-
-      // Update the scatter plot
-      circles.enter().append("circle").merge(circles)
-        .attr("cx", d => xScale(+d.total_influenza_death))
-        .attr("cy", d => yScale(+d.total_pneumonia_death))
-        .attr("r", 5)
-        .attr("fill", "steelblue");
-
-      // Remove old data points
-      circles.exit().remove();
-    }
-
-    // Initialize the scatter plot
-    createScatterPlot(years[0]);
-
-    // Update the plot when a new year is selected
-    selector.on("change", function(event) {
-      // Clear the existing plot
-      svg.selectAll("g").remove();
-
-      // Draw the new plot for the selected year
-      createScatterPlot(this.value);
-    });
-  })
-  .catch(function(error) {
-    console.error('Error loading the CSV file:', error);
-  });
-  
-</script>
+<p>In our interactive graph section, we present data for eight distinct years. You can investigate the correlation between pneumonia and influenza fatalities by selecting a year of interest. Each point on the graph represents the aggregated death count for a particular state over the months of the chosen year. This visual representation allows for an immediate and clear understanding of the death toll relationship between these two illnesses on a state-by-state basis.</p>
 
 
 
